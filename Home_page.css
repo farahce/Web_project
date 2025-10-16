@@ -71,19 +71,6 @@ header{
     z-index: 1;
 }
 
-header nav{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header .logo{
-    max-width: 132px;
-}
-
-header .btn{
-    background-color: var(--secondary-color);
-}
 
 #main{
     overflow: hidden;
@@ -161,6 +148,31 @@ header .btn{
     padding-top: 4vw;
     padding-bottom: 4vw;
 }
+#section3 .btn{
+    background-color: var(--black);
+    margin-top: 1.8rem;
+}
+
+.juice-section{
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-direction: row-reverse;
+}
+.juice-section .banner{
+	flex: 1 1 50%;
+}
+.juice-section .juice-text{
+	flex: 1 1 50%;
+	max-width: 560px;
+	transform: translateX(-170px);
+	position: relative;
+	z-index: 3;
+}
+.juice-text p{
+	margin-bottom: 1.2rem;
+}
+
 
 #section3 .heading{
     font-size: clamp(2rem, 12.5vw, 13.5rem);
@@ -169,20 +181,10 @@ header .btn{
     margin-bottom: 3vw;
 }
 
-#section3 video{
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 0 30px #73442536;
+#section3 .juice-text .heading{
+	margin-left: -40px;
 }
 
-#section3 .content{
-    max-width: 500px;
-    margin-left: auto;
-}
-
-#section3 p{
-    margin-top: 1rem;
-}
 
 
 
@@ -193,12 +195,12 @@ header .btn{
 
 #section2 img{
     position: absolute;
-    width: 500px;      /* fixed size you want */
-    height: auto;      /* keep aspect ratio */
+    width: 500px;
+    height: auto;
 
     top: 32%;
     left: 58%;
-    transform: translate(-50%, -50%); /* center it */
+    transform: translate(-50%, -50%);
     filter: drop-shadow(8px 35px 6px #00000025);
 
 }
@@ -209,6 +211,28 @@ header .btn{
     position: relative;
 }
 
+
+
+
+.cookies-content{
+    margin-top: 110px;
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+.cookies-content .heading{
+	font-size: clamp(0.8rem, 3vw, 1.75rem);
+}
+.cookies-content p{
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+.cookies-content .btn{
+	background-color: var(--black);
+	margin-top: 1rem;
+}
+
 /**/
 .product{
     display: flex;
@@ -216,39 +240,6 @@ header .btn{
     align-items: center;
     justify-content: end;
 }
-
-.product .name{
-    font-size: 24px;
-    font-weight: 500;
-}
-
-.product .price{
-    font-size: 24px;
-    font-weight: 700;
-}
-
-
-
-/* footer */
-
-footer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 0;
-    border-top: 2px solid var(--primary-color);
-}
-
-footer .logo{
-    max-width: 132px;
-}
-
-footer .social{
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
 .banner{
     margin-top: -50px;
     height: 100vh;
@@ -257,7 +248,7 @@ footer .social{
 }
 .product{
     position: absolute;
-    left: 20%;
+    left: 25%;
     transform: translateX(-50%);
     bottom: 50px;
     z-index: 2;
@@ -298,15 +289,6 @@ footer .social{
     --left: 500px;
 }
 
-.banner:has(.product:hover) .rock img:nth-child(1){
-    transform: translateX(-50%) translateY(50px);
-}
-.banner:has(.product:hover) .rock img:nth-child(2){
-    transform: translateX(-100px) translateY(100px);
-}
-.banner:has(.product:hover) .rock img:nth-child(3){
-    transform: translateX(100px) translateY(100px);
-}
 @media screen and (max-width: 1023px) {
 
     .soda{
@@ -314,20 +296,28 @@ footer .social{
     }
 }
 @media screen and (max-width: 767px) {
+
+	.juice-section{
+		flex-direction: column;
+		gap: 2rem;
+	}
+	.juice-section .juice-text{
+		max-width: 100%;
+		margin-left: 0;
+		transform: none;
+	}
+	#section3 .juice-text .heading{
+		margin-left: 0;
+	}
     .soda{
         width: 250px;
-    }
-    header img{
-        display: none;
-    }
-    header .author{
-        width: 100%;
     }
 
 }
 .product-img-wrapper{
     position: relative;
     overflow-x: clip;
+    height: 360px;
 }
 .product-img-wrapper img{
     position: absolute;
@@ -336,15 +326,15 @@ footer .social{
 .product1{
     left: 32%;
     transform: translateX(-32%) rotate(350deg);
-    top: 90px;
+    top: 110px;
 }
 .product2{
     left: 50%;
     transform: translateX(-50%);
-    top: 60px;
+    top: 80px;
 }
 .product3{
     left: 68%;
     transform: translateX(-68%) rotate(10deg);
-    top: 90px;
+    top: 110px;
 }

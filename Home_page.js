@@ -41,6 +41,19 @@ ScrollTrigger.matchMedia({
             ease: 'power1.inOut',
         });
 
+        // Animate the text and button under DRINKS from below on scroll
+        gsap.from('#section3 .juice-text p, #section3 .juice-text .btn', {
+            scrollTrigger: {
+                trigger: '#section3',
+                start: 'top bottom',
+                end: 'center bottom',
+                scrub: true,
+            },
+            y: '140%',
+            ease: 'power1.inOut',
+            stagger: 0.1
+        });
+
         gsap.from('#section2 img', {
             scrollTrigger: {
                 trigger: '#section2',
