@@ -7,14 +7,11 @@ ScrollSmoother.create({
     effects: true,
 });
 
-
 let isShortHeight = window.screen.height < 1050;
-
-// console.log(window.screen.height);//
 
 ScrollTrigger.matchMedia({
     "(min-width: 991px)": function () {
-
+        // Animation for headphone
         gsap.to('#headphone', {
             scrollTrigger: {
                 trigger: '#section2',
@@ -30,6 +27,7 @@ ScrollTrigger.matchMedia({
             immediateRender: false
         });
 
+        // Animation for drinks section heading
         gsap.from('#section3 .heading', {
             scrollTrigger: {
                 trigger: '#section3',
@@ -41,7 +39,7 @@ ScrollTrigger.matchMedia({
             ease: 'power1.inOut',
         });
 
-        // Animate the text and button under DRINKS from below on scroll
+        // Animation for drinks section text and button
         gsap.from('#section3 .juice-text p, #section3 .juice-text .btn', {
             scrollTrigger: {
                 trigger: '#section3',
@@ -54,6 +52,7 @@ ScrollTrigger.matchMedia({
             stagger: 0.1
         });
 
+        // Animation for donuts section image
         gsap.from('#section2 img', {
             scrollTrigger: {
                 trigger: '#section2',
@@ -66,14 +65,15 @@ ScrollTrigger.matchMedia({
             ease: 'power1.inOut',
         });
 
+        // Animation for intro section heading
         let split = SplitText.create('#section1 .heading', {
             type: 'chars, words, lines',
             mask: 'lines'
         });
 
         gsap.from(split.chars, {
-            yPercent: ()=> gsap.utils.random(-100, 100),
-            rotation: ()=> gsap.utils.random(-30, 30),
+            yPercent: () => gsap.utils.random(-100, 100),
+            rotation: () => gsap.utils.random(-30, 30),
             autoAlpha: 0,
             ease: 'back.out(1.5)',
             stagger: {
@@ -83,18 +83,18 @@ ScrollTrigger.matchMedia({
             duration: 1.5
         });
 
+        // Initial headphone animation
         gsap.from('#headphone', {
             opacity: 0,
             scale: 0,
             duration: 1,
             delay: 1,
             ease: 'power1.inOut'
-        })
-
+        });
     }
+});
 
-})
-
+// Animations for cookies (removed rotationY and scale, kept opacity and position animations)
 gsap.from('.product-img-wrapper .product1', {
     scrollTrigger: {
         trigger: '#section4',
@@ -103,18 +103,18 @@ gsap.from('.product-img-wrapper .product1', {
     },
     opacity: 0,
     x: -500,
-    duration: 1
+    duration: 1.5
 });
 
 gsap.from('.product-img-wrapper .product2', {
     scrollTrigger: {
-        trigger: 'section4',
+        trigger: '#section4',
         start: 'top 80%',
         toggleActions: 'play none none reverse'
     },
     opacity: 0,
     y: 300,
-    duration: 1
+    duration: 1.5
 });
 
 gsap.from('.product-img-wrapper .product3', {
@@ -125,6 +125,7 @@ gsap.from('.product-img-wrapper .product3', {
     },
     opacity: 0,
     x: 500,
-    duration: 1
+    duration: 1.5
 });
 
+// Removed 3D hover effect event listeners for cookies
