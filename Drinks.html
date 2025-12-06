@@ -1,10 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drinks - Dafah</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap" rel="stylesheet" />
+
+    <!-- Icons & CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="drinks.css" />
 </head>
 <body>
 
+<header class="w-full">
+    <nav class="nav">
+        <h1 class="logo">Dafah</h1>
+        <ul class="nav-links">
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#gifts">Gift Cards</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="drink-page">
+    <h1 class="page-heading">Our Cozy Drink Collection</h1>
+    <p class="page-intro">Warm your soul with handcrafted drinks made from the finest beans and love — every sip feels like home.</p>
+
+    <div class="carousel-container">
+        <button class="arrow left-arrow"><i class="fas fa-chevron-left"></i></button>
+
+        <div class="drink-grid" id="drinkCarousel">
+
+            <!-- 1. Iced Latte -->
+            <div class="drink-card">
+                <img src="images/icedlate.png" alt="Iced Latte" class="drink-img">
+                <h3 class="drink-title">Iced Latte</h3>
+                <p class="drink-desc">Cool, smooth espresso with chilled milk over ice.</p>
+                <div class="drink-price">90 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/icedlate.png" class="hover-img" alt="Iced Latte">
+                    <h2 class="hover-title">Iced Latte</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 2. Iced Caramel Macchiato -->
+            <div class="drink-card">
+                <img src="images/caramel.png" alt="Iced Caramel Macchiato" class="drink-img">
+                <h3 class="drink-title">Iced Caramel Macchiato</h3>
+                <p class="drink-desc">Layered espresso, milk, and caramel drizzle.</p>
+                <div class="drink-price">250 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/caramel.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Iced Caramel Macchiato</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 3. Iced Mocha -->
+            <div class="drink-card">
+                <img src="images/mocha.png" alt="Iced Mocha" class="drink-img">
+                <h3 class="drink-title">Iced Mocha</h3>
+                <p class="drink-desc">Rich chocolate and espresso over ice.</p>
+                <div class="drink-price">280 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/mocha.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Iced Mocha</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 4. Cappuccino -->
+            <div class="drink-card">
+                <img src="images/capucino.png" alt="Cappuccino" class="drink-img">
+                <h3 class="drink-title">Cappuccino</h3>
+                <p class="drink-desc">Espresso with steamed milk and thick foam.</p>
+                <div class="drink-price">120 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/capucino.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Cappuccino</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 5. Americano -->
+            <div class="drink-card">
+                <img src="images/espresso.png" alt="Americano" class="drink-img">
+                <h3 class="drink-title">Americano</h3>
+                <p class="drink-desc">Bold espresso with hot water.</p>
+                <div class="drink-price">5 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/espresso.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Americano</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 6. Hot Chocolate -->
+            <div class="drink-card">
+                <img src="images/hotchoco.png" alt="Hot Chocolate" class="drink-img">
+                <h3 class="drink-title">Hot Chocolate</h3>
+                <p class="drink-desc">Rich, creamy, and topped with whipped cream.</p>
+                <div class="drink-price">360 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/hotchoco.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Hot Chocolate</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 7. Iced French Vanilla Latte -->
+            <div class="drink-card">
+                <img src="images/vanilla.png" alt="Iced French Vanilla Latte" class="drink-img">
+                <h3 class="drink-title">Iced French Vanilla Latte</h3>
+                <p class="drink-desc">Sweet vanilla and smooth espresso on ice.</p>
+                <div class="drink-price">210 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/vanilla.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Iced French Vanilla Latte</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 8. Mocha Frappé -->
+            <div class="drink-card">
+                <img src="images/mocha.png" alt="Mocha Frappé" class="drink-img">
+                <h3 class="drink-title">Mocha Frappé</h3>
+                <p class="drink-desc">Chocolate-coffee blended perfection.</p>
+                <div class="drink-price">450 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/mocha.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Mocha Frappé</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+            <!-- 9. Espresso -->
+            <div class="drink-card">
+                <img src="images/espresso.png" alt="Espresso" class="drink-img">
+                <h3 class="drink-title">Espresso</h3>
+                <p class="drink-desc">Pure, bold shot of rich espresso.</p>
+                <div class="drink-price">0 Cal</div>
+                <button class="btn add-to-cart">View Details</button>
+
+                <div class="hover-overlay">
+                    <img src="images/espresso.png" class="hover-img" alt="">
+                    <h2 class="hover-title">Espresso</h2>
+                    <select class="custom-select"><option>Select a size</option><option>Small</option><option>Medium</option><option>Large</option></select>
+                    <select class="custom-select"><option>Milk type</option><option>Whole</option><option>2%</option><option>Oat +$0.80</option></select>
+                    <select class="custom-select"><option>Temperature</option><option>Iced</option><option>Hot</option></select>
+                    <button class="add-btn">ADD TO BASKET</button>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="arrow right-arrow"><i class="fas fa-chevron-right"></i></button>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <p class="footer-text">Thank you for visiting Dafah — where every sip feels like a warm hug.</p>
+        <div class="social-icons">
+            <a href="#" aria-label="Facebook">Facebook</a>
+            <a href="#" aria-label="Instagram">Instagram</a>
+            <a href="#" aria-label="Twitter">Twitter</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="drinks.js"></script>
 </body>
 </html>

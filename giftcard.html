@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Cards – Sweet Loop Bakery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #fffaf0;
+            color: #4a2c1a;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            color: #d2691e;
+        }
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            margin: 0;
+            background: linear-gradient(45deg, #d2691e, #f9ca24, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+        .hero h1::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 5px;
+            background: #d2691e;
+            margin: 1.5rem auto;
+            border-radius: 3px;
+        }
+        .gift-options {
+            margin: 4rem 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .gift-card {
+            background: #fff;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(210,105,30,0.15);
+            transition: all 0.4s;
+            position: relative;
+            cursor: pointer;
+        }
+        .gift-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(210,105,30,0.25);
+        }
+        .gift-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            pointer-events: none;
+        }
+        .card-header {
+            height: 180px;
+            background: linear-gradient(135deg, #d2691e, #f9ca24);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-header::after {
+            content: '✦';
+            position: absolute;
+            font-size: 3rem;
+            color: rgba(255,255,255,0.3);
+            animation: float 4s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        .amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .card-body {
+            padding: 1.8rem;
+            text-align: center;
+        }
+        .card-body h3 {
+            margin: 0 0 0.5rem;
+            color: #d2691e;
+        }
+        .card-body p {
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+            color: #7a4f3a;
+        }
+        .flavor-tag {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .custom-amount {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+        }
+        .custom-amount .amount {
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .cta {
+            text-align: center;
+            margin: 5rem 0 3rem;
+        }
+        .btn {
+            display: inline-block;
+            background: #d2691e;
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(210,105,30,0.3);
+        }
+        .btn:hover {
+            background: #b85c15;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(210,105,30,0.4);
+        }
+        .sprinkle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: fall linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+        @keyframes fall {
+            to { transform: translateY(120vh) rotate(360deg); }
+        }
+        .ribbon {
+            position: absolute;
+            top: 20px;
+            right: -40px;
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 50px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .digital-only {
+            background: #f9ca24;
+        }
+        .info {
+            background: #f8f4e8;
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 3rem 0;
+            text-align: center;
+            border: 2px dashed #d2691e;
+        }
+        .info p {
+            margin: 0.8rem 0;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sprinkles"></div>
+
+<div class="container">
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>Gift the Loop</h1>
+        <p>Because “I owe you a cookie” is now legally binding.</p>
+    </section>
+
+    <!-- Gift Card Options -->
+    <section class="gift-options">
+        <div class="grid">
+            <!-- $25 Card -->
+            <div class="gift-card" onclick="selectCard(this, 25)">
+                <div class="card-header">
+                    <div class="amount">$25</div>
+                </div>
+                <div class="card-body">
+                    <h3>The “One Donut + Coffee” Loop</h3>
+                    <p>Perfect for the friend who says “just one bite” and eats three.</p>
+                    <div class="flavor-tag">Classic</div>
+                </div>
+            </div>
+
+            <!-- $50 Card -->
+            <div class="gift-card" onclick="selectCard(this, 50)">
+                <div class="card-header">
+                    <div class="amount">$50</div>
+                </div>
+                <div class="card-body">
+                    <h3>The “Half-Dozen Happiness” Loop</h3>
+                    <p>6 donuts OR 12 cookies OR 1 existential crisis over choices.</p>
+                    <div class="flavor-tag">Popular</div>
+                </div>
+                <div class="ribbon">BEST VALUE</div>
+            </div>
+
+            <!-- $100 Card -->
+            <div class="gift-card" onclick="selectCard(this, 100)">
+                <div class="card-header digital-only">
+                    <div class="amount">$100</div>
+                </div>
+                <div class="card-body">
+                    <h3>The “I Love You” Loop</h3>
+                    <p>Digital-only. Instant delivery. Zero excuses.</p>
+                    <div class="flavor-tag">Digital Only</div>
+                </div>
+            </div>
+
+            <!-- Custom Amount -->
+            <div class="gift-card custom-amount" onclick="openCustom()">
+                <div class="card-header">
+                    <div class="amount">?</div>
+                </div>
+                <div class="card-body">
+                    <h3>Custom Loop</h3>
+                    <p>From $10 to $500. Because some people eat feelings.</p>
+                    <div class="flavor-tag">You Pick</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info -->
+    <div class="info">
+        <p>🎁 <strong>Instant digital delivery</strong> – email or text in 60 seconds flat.</p>
+        <p>🧾 <strong>Never expires</strong> – because guilt shouldn’t have a deadline.</p>
+        <p>🔄 <strong>Use in-store or online</strong> – loop however you like.</p>
+        <p>✉️ <strong>Personalize it</strong> – add a message, voice note, or your mom’s cookie recipe.</p>
+    </div>
+
+    <!-- CTA -->
+    <section class="cta">
+        <p id="cta-text"><strong>Select a card above to get started.</strong></p>
+        <a href="#" class="btn" id="buy-btn" style="display:none;">Buy Gift Card →</a>
+    </section>
+
+</div>
+
+<script>
+    // Falling sprinkles
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f3722c'];
+    setInterval(() => {
+        const sprinkle = document.createElement('div');
+        sprinkle.className = 'sprinkle';
+        sprinkle.textContent = ['✦','✧','❋','✿','✸'][Math.floor(Math.random()*5)];
+        sprinkle.style.color = colors[Math.floor(Math.random() * colors.length)];
+        sprinkle.style.left = Math.random() * 100 + 'vw';
+        sprinkle.style.animationDuration = (Math.random() * 4 + 3) + 's';
+        sprinkle.style.opacity = Math.random() * 0.8 + 0.2;
+        document.querySelector('.sprinkles').appendChild(sprinkle);
+        setTimeout(() => sprinkle.remove(), 7000);
+    }, 250);
+
+    // Card selection
+    let selectedAmount = 0;
+    function selectCard(card, amount) {
+        document.querySelectorAll('.gift-card').forEach(c => c.style.border = 'none');
+        card.style.border = '4px solid #d2691e';
+        selectedAmount = amount;
+        document.getElementById('cta-text').innerHTML = `<strong>Ready to gift $${amount} of pure joy?</strong>`;
+        const btn = document.getElementById('buy-btn');
+        btn.style.display = 'inline-block';
+        btn.href = `mailto:hello@sweetloopbakery.com?subject=Gift Card Purchase - $${amount}&body=I'd like to buy a $${amount} digital gift card!%0A%0ARecipient Name:%0ARecipient Email/Phone:%0AMy Message:%0A%0AThanks!`;
+        btn.textContent = `Buy $${amount} Gift Card →`;
+    }
+
+    function openCustom() {
+        const amount = prompt("Enter custom amount ($10–$500):", "50");
+        if (amount && !isNaN(amount) && amount >= 10 && amount <= 500) {
+            selectCard(document.querySelector('.custom-amount'), amount);
+        }
+    }
+</script>
+
+</body>
+</html>
