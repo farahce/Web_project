@@ -5,48 +5,136 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="menu.css" />
-    <title>Pokemon Magazine</title>
+    <title>MENU</title>
 </head>
 
 <body>
-<div class="flipbook">
-    <div class="hard">OUR MENU <small>Menu</small></div>
-    <div class="hard">
+<div class="menu-container">
 
+    <div class="flipbook">
+        <div class="hard cover-page">
+            <img src="images/menu.jpg" alt="" class="cover-bg-image">
+            <div class="cover-content"></div>
+            <div class="menu-text-vertical">MENU</div>
+        </div>
+        <div class="hard">
+
+        </div>
+        <div>
+            <small>Thanks for choosing us</small>
+            <small>^^</small>
+        </div>
+        <div>
+            <img src="images/img-1.png" alt="" />
+            <small> DOUNTS </small>
+        </div>
+        <div>
+            <img src="images/img-2.png" alt="" />
+            <small> DOUNTS </small>
+        </div>
+        <div>
+            <img src="images/img-3.png" alt="" />
+            <small> DRINKS </small>
+        </div>
+        <div>
+            <img src="images/img-4.png" alt="" />
+            <small> DRINKS </small>
+        </div>
+        <div>
+            <img src="images/img-5.png" alt="" />
+            <small> COOKIES </small>
+        </div>
+        <div>
+            <img src="images/img-6.png" alt="" />
+            <small> COOKIES </small>
+        </div>
+        <div>
+            <img src="images/img-6.png" alt="" />
+        </div>
+        <div class="hard"></div>
+        <div class="hard">Thank You </div>
     </div>
-    <div>
-        <small>Thanks for choosing us</small>
-        <small>^^</small>
+    <div class="menu-buttons">
+        <button class="menu-btn" id="donutsBtn">Donuts</button>
+        <button class="menu-btn" id="drinksBtn">Drinks</button>
+        <button class="menu-btn" id="cookiesBtn">Cookies</button>
     </div>
-    <div>
-        <img src="images/img-1.png" alt="" />
-        <small> DOUNTS </small>
-    </div>
-    <div>
-        <img src="images/img-2.png" alt="" />
-        <small> DRINKS </small>
-    </div>
-    <div>
-        <img src="images/img-3.png" alt="" />
-        <small> COOKIES </small>
-    </div>
-    <div>
-        <img src="images/img-4.png" alt="" />
-        <small> 4 </small>
-    </div>
-    <div>
-        <img src="images/img-5.png" alt="" />
-        <small> 5 </small>
-    </div>
-    <div class="hard"></div>
-    <div class="hard">Thank You </div>
 </div>
+
 
 <script src="jquery.js"></script>
 <script src="turn.js"></script>
 <script>
-    $(".flipbook").turn();
+    $(document).ready(function() {
+        var flipbookOpened = false;
+        
+        $(".flipbook").turn();
+
+        // Wait for turn.js to finish initializing, then resize the flipbook and apply styles
+        setTimeout(function() {
+            // Resize the flipbook using turn.js size method
+            $(".flipbook").turn("size", 1200, 720);
+
+            var $coverImage = $(".cover-bg-image");
+            if ($coverImage.length) {
+                $coverImage.css({
+                    'width': '99.9%',
+                    'height': '99.9%',
+                    'position': 'absolute',
+                    'top': '50%',
+                    'left': '50%',
+                    'transform': 'translate(-50%, -50%)',
+                    'object-fit': 'cover'
+                });
+            }
+
+            // Apply styles to the vertical menu text
+            var $menuText = $(".menu-text-vertical");
+            if ($menuText.length) {
+                $menuText.css({
+                    'position': 'absolute',
+                    'right': '-30px',
+                    'top': '50%',
+                    'transform': 'translateY(-50%) rotate(90deg)',
+                    'color': '#6B5546',
+                    'font-size': '120px',
+                    'font-weight': 'bold',
+                    'z-index': '10',
+                    'white-space': 'nowrap',
+                    'letter-spacing': '12px'
+                });
+            }
+        }, 500);
+
+        // Handle click on the flipbook cover to open it
+        $(".flipbook").on("click", function(e) {
+            // Only trigger on the cover page (page 1)
+            if ($(this).turn("page") === 1 && !flipbookOpened) {
+                flipbookOpened = true;
+                
+                // Add class to move flipbook to the right and open simultaneously
+                $(this).addClass("opened");
+                $(".flipbook").turn("next");
+            }
+        });
+
+        // Handle Donuts button click to navigate to page 4
+        $("#donutsBtn").on("click", function() {
+            $(".flipbook").turn("page", 4);
+        });
+
+        // Handle Drinks button click to navigate to page 6 (first DRINKS page)
+        $("#drinksBtn").on("click", function() {
+            $(".flipbook").turn("page", 6);
+        });
+
+        // Handle Cookies button click to navigate to page 8 (first COOKIES page)
+        $("#cookiesBtn").on("click", function() {
+            $(".flipbook").turn("page", 8);
+        });
+    });
 </script>
 </body>
 
 </html>
+

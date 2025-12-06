@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 *{
     margin: 0;
@@ -7,25 +7,100 @@
     font-family: "Poppins", sans-serif;
 }
 
-body {
-    display: grid;
-    place-content: center;
-    height: 100vh;
-    width: 100vw;
+html, body {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: hidden;
-    background: #F8F1E9;
 }
+
+body {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    background: #F8F1E9 !important;
+    padding-left: 250px !important;
+}
+
+.menu-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 40px !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.menu-buttons {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 0px !important; /* no space between buttons */
+    justify-content: center !important;
+    width: 100% !important;
+}
+
 
 .flipbook {
-    width: 1000px;
-    height: 600px;
+    width: 1200px !important;
+    height: 720px !important;
+    position: absolute !important;
+    top: 47% !important;
+    left: 32.5% !important;
+    transform: translate(-50%, -50%) !important; /* centered initially */
+    transition: transform 0.8s ease; /* smooth slide effect */
+    cursor: pointer;
 }
 
+.flipbook.opened {
+    transform: translate(calc(-50% + 250px), -50%) !important; /* moved to the right */
+}
+
+
+
 .flipbook .hard {
-    background: #D4A373 !important;
+    background-color: #f1c292 !important;
     color: #fff;
     font-weight: bold;
     border: none;
+}
+
+.flipbook .hard.cover-page {
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: transparent !important;
+}
+
+.flipbook .hard.cover-page .cover-bg-image {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 99.9% !important;
+    height: 99.9% !important;
+    object-fit: cover !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
+}
+
+.flipbook .hard.cover-page .cover-content {
+    position: relative;
+    z-index: 1;
+}
+
+.flipbook .hard.cover-page .menu-text-vertical {
+    position: absolute !important;
+    right: -30px !important;
+    top: 50% !important;
+    transform: translateY(-50%) rotate(90deg) !important;
+    color: #6B5546 !important;
+    font-size: 120px !important;
+    font-weight: bold !important;
+    z-index: 10 !important;
+    white-space: nowrap !important;
+    letter-spacing: 12px !important;
 }
 
 .flipbook .hard small{
@@ -36,7 +111,7 @@ body {
 }
 
 .flipbook .page {
-    background: white;
+    background: #F5E4D3;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -54,4 +129,25 @@ body {
 .flipbook .page small{
     font-size: 14px;
     margin-bottom: 10px;
+}
+
+
+.menu-btn {
+    padding: 8px 50px;  /* thinner vertically, wider horizontally */
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #6B5546;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-family: "Poppins", sans-serif;
+    margin-top: 730px !important; /* moves all 3 buttons down */
+    margin-left: 145px !important; /* moves them to the right */
+    margin-right: -10px !important; /* negative margin to bring buttons closer */
+}
+
+.menu-btn:hover {
+    background-color: #8B6F5F;
 }
