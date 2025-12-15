@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drinks - Dafah</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap" rel="stylesheet" />
+
+    <!-- Icons & CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="Drinks.css" />
+</head>
+<body>
+
+<header class="w-full">
+    <nav class="nav">
+        <h1 class="logo">Dafah</h1>
+        <ul class="nav-links">
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="giftcard.html">Gift Cards</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="drink-page">
+    <h1 class="page-heading">Craft Your Perfect Drink</h1>
+    <p class="page-intro">Build your dream beverage with our interactive mixologist. Choose your base, customize your flavors, and watch your drink come to life.</p>
+
+    <div class="mixologist-container">
+        <!-- Left Side: Drink Customizer -->
+        <div class="customizer-section">
+            <div class="customizer-title">Your Mixologist</div>
+            
+            <div class="customizer-group">
+                <label class="customizer-label">Choose Your Base</label>
+                <div class="option-buttons">
+                    <button class="option-btn active" data-base="espresso" data-color="#6F4E37">
+                        <i class="fas fa-circle" style="color: #6F4E37;"></i> Espresso
+                    </button>
+                    <button class="option-btn" data-base="americano" data-color="#8B6F47">
+                        <i class="fas fa-circle" style="color: #8B6F47;"></i> Americano
+                    </button>
+                    <button class="option-btn" data-base="latte" data-color="#A0826D">
+                        <i class="fas fa-circle" style="color: #A0826D;"></i> Latte
+                    </button>
+                </div>
+            </div>
+
+            <div class="customizer-group">
+                <label class="customizer-label">Milk Type</label>
+                <div class="option-buttons">
+                    <button class="option-btn active" data-milk="whole" data-price="0">Whole Milk</button>
+                    <button class="option-btn" data-milk="oat" data-price="0.80">Oat Milk +$0.80</button>
+                    <button class="option-btn" data-milk="almond" data-price="0.80">Almond Milk +$0.80</button>
+                    <button class="option-btn" data-milk="coconut" data-price="1.00">Coconut Milk +$1.00</button>
+                </div>
+            </div>
+
+            <div class="customizer-group">
+                <label class="customizer-label">Add Flavor</label>
+                <div class="option-buttons">
+                    <button class="option-btn active" data-flavor="none" data-price="0">None</button>
+                    <button class="option-btn" data-flavor="vanilla" data-price="0.50">Vanilla +$0.50</button>
+                    <button class="option-btn" data-flavor="caramel" data-price="0.50">Caramel +$0.50</button>
+                    <button class="option-btn" data-flavor="hazelnut" data-price="0.50">Hazelnut +$0.50</button>
+                    <button class="option-btn" data-flavor="chocolate" data-price="0.75">Chocolate +$0.75</button>
+                </div>
+            </div>
+
+            <div class="customizer-group">
+                <label class="customizer-label">Temperature</label>
+                <div class="option-buttons">
+                    <button class="option-btn active" data-temp="hot">Hot</button>
+                    <button class="option-btn" data-temp="iced">Iced</button>
+                </div>
+            </div>
+
+            <div class="customizer-group">
+                <label class="customizer-label">Add Extras</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="extra-checkbox" data-extra="whipped" data-price="0.50">
+                        <span>Whipped Cream +$0.50</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="extra-checkbox" data-extra="cinnamon" data-price="0.25">
+                        <span>Cinnamon Dust +$0.25</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="extra-checkbox" data-extra="honey" data-price="0.50">
+                        <span>Honey Drizzle +$0.50</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="price-display">
+                <span class="price-label">Total Price:</span>
+                <span class="price-value" id="totalPrice">$4.50</span>
+            </div>
+
+            <button class="btn add-to-basket-btn">Add to Basket</button>
+        </div>
+
+        <!-- Right Side: Drink Visualization -->
+        <div class="visualization-section">
+            <div class="cup-container">
+                <div class="cup">
+                    <div class="cup-layers" id="cupLayers">
+                        <div class="layer layer-base" id="layerBase"></div>
+                        <div class="layer layer-milk" id="layerMilk"></div>
+                        <div class="layer layer-flavor" id="layerFlavor"></div>
+                    </div>
+                    <div class="cup-handle"></div>
+                </div>
+                <div class="cup-details" id="cupDetails">
+                    <div class="detail-item" id="baseDetail">Espresso</div>
+                    <div class="detail-item" id="milkDetail">Whole Milk</div>
+                    <div class="detail-item" id="flavorDetail"></div>
+                    <div class="detail-item" id="tempDetail">Hot</div>
+                    <div class="detail-item" id="extrasDetail"></div>
+                </div>
+                <div class="steam" id="steam"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preset Drinks Section -->
+    <div class="preset-section">
+        <h2 class="section-title">Or Choose a Classic</h2>
+        <div class="preset-grid">
+            <div class="preset-card" data-preset="iced-latte">
+                <img src="images/icedlate.png" alt="Iced Latte" class="preset-img">
+                <h3 class="preset-name">Iced Latte</h3>
+                <p class="preset-desc">Cool, smooth espresso with chilled milk over ice.</p>
+                <div class="preset-price">$4.50</div>
+                <button class="btn preset-btn">Quick Add</button>
+            </div>
+
+            <div class="preset-card" data-preset="caramel-macchiato">
+                <img src="images/caramel.png" alt="Iced Caramel Macchiato" class="preset-img">
+                <h3 class="preset-name">Iced Caramel Macchiato</h3>
+                <p class="preset-desc">Layered espresso, milk, and caramel drizzle.</p>
+                <div class="preset-price">$5.25</div>
+                <button class="btn preset-btn">Quick Add</button>
+            </div>
+
+            <div class="preset-card" data-preset="mocha">
+                <img src="images/mocha.png" alt="Iced Mocha" class="preset-img">
+                <h3 class="preset-name">Iced Mocha</h3>
+                <p class="preset-desc">Rich chocolate and espresso over ice.</p>
+                <div class="preset-price">$5.50</div>
+                <button class="btn preset-btn">Quick Add</button>
+            </div>
+
+            <div class="preset-card" data-preset="cappuccino">
+                <img src="images/capucino.png" alt="Cappuccino" class="preset-img">
+                <h3 class="preset-name">Cappuccino</h3>
+                <p class="preset-desc">Espresso with steamed milk and thick foam.</p>
+                <div class="preset-price">$4.75</div>
+                <button class="btn preset-btn">Quick Add</button>
+            </div>
+
+            <div class="preset-card" data-preset="americano">
+                <img src="images/espresso.png" alt="Americano" class="preset-img">
+                <h3 class="preset-name">Americano</h3>
+                <p class="preset-desc">Bold espresso with hot water.</p>
+                <div class="preset-price">$3.50</div>
+                <button class="btn preset-btn">Quick Add</button>
+            </div>
+
+            <div class="preset-card" data-preset="hot-chocolate">
+                <img src="images/hotchoco.png" alt="Hot Chocolate" class="preset-img">
+                <h3 class="preset-name">Hot Chocolate</h3>
+                <p class="preset-desc">Rich, creamy, and topped with whipped cream.</p>
+                <div class="preset-price">$5.00</div>
+                <button class="btn preset-btn">Quick Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <p class="footer-text">Thank you for visiting Dafah — where every sip feels like a warm hug.</p>
+        <div class="social-icons">
+            <a href="#" aria-label="Facebook">Facebook</a>
+            <a href="#" aria-label="Instagram">Instagram</a>
+            <a href="#" aria-label="Twitter">Twitter</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="Drinks.js"></script>
+</body>
+</html>

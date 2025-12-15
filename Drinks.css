@@ -1,0 +1,603 @@
+/* Variables */
+:root {
+    --bg-color: #F8F1E9;
+    --primary-color: #D4A373;
+    --secondary-color: #8A4B2F;
+    --accent-color: #F5E6CC;
+    --heading-font: "Outfit", sans-serif;
+    --body-font: "DM Sans", sans-serif;
+}
+
+/* Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--body-font);
+    background-color: var(--bg-color);
+    color: var(--secondary-color);
+    overflow-x: hidden;
+}
+
+.w-full {
+    width: 100%;
+}
+
+/* Header & Navigation */
+header {
+    padding: 1rem 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    background: rgba(248, 241, 233, 0.95);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.logo {
+    font-family: var(--heading-font);
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin-left: 2rem;
+}
+
+.nav-links a {
+    color: var(--secondary-color);
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Main Page */
+.drink-page {
+    padding: 120px 5% 80px;
+}
+
+.page-heading {
+    font-family: var(--heading-font);
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.page-intro {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    max-width: 800px;
+    margin: 0 auto 60px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Mixologist Container */
+.mixologist-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto 80px;
+    align-items: center;
+}
+
+/* Customizer Section */
+.customizer-section {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+}
+
+.customizer-title {
+    font-family: var(--heading-font);
+    font-size: 2rem;
+    color: var(--secondary-color);
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.customizer-group {
+    margin-bottom: 30px;
+}
+
+.customizer-label {
+    display: block;
+    font-family: var(--heading-font);
+    font-size: 1rem;
+    color: var(--secondary-color);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.option-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.option-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px 16px;
+    background: var(--accent-color);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: var(--secondary-color);
+    font-family: var(--body-font);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.option-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.option-btn.active {
+    background: var(--secondary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 20px rgba(138, 75, 47, 0.3);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--secondary-color);
+    transition: all 0.3s ease;
+}
+
+.checkbox-label:hover {
+    color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--secondary-color);
+}
+
+.price-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.price-label {
+    font-family: var(--heading-font);
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+}
+
+.price-value {
+    font-family: var(--heading-font);
+    font-size: 2rem;
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.add-to-basket-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--heading-font);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.add-to-basket-btn:hover {
+    background: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(138, 75, 47, 0.3);
+}
+
+/* Visualization Section */
+.visualization-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+}
+
+.cup-container {
+    position: relative;
+    width: 300px;
+    height: 450px;
+}
+
+/* Cup Styling */
+.cup {
+    position: relative;
+    width: 200px;
+    height: 280px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    border: 3px solid var(--secondary-color);
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    animation: cupAppear 0.6s ease-out;
+}
+
+@keyframes cupAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Cup Layers */
+.cup-layers {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.layer {
+    width: 100%;
+    transition: all 0.5s ease;
+    border-radius: 0 0 17px 17px;
+}
+
+.layer-base {
+    height: 40%;
+    background: linear-gradient(135deg, #6F4E37, #5A3D2A);
+    border-radius: 0;
+}
+
+.layer-milk {
+    height: 0%;
+    background: linear-gradient(135deg, #D4A574, #C19A6B);
+    opacity: 0.9;
+}
+
+.layer-flavor {
+    height: 0%;
+    background: linear-gradient(135deg, #8B6F47, #6F5A3D);
+    opacity: 0.8;
+}
+
+/* Whipped Cream Effect */
+.cup-layers.with-whipped::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.cup-handle {
+    position: absolute;
+    right: -35px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 60px;
+    border: 3px solid var(--secondary-color);
+    border-radius: 0 20px 20px 0;
+    border-left: none;
+}
+
+.cup-details {
+    position: absolute;
+    bottom: -130px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 250px;
+}
+
+.detail-item {
+    font-size: 0.95rem;
+    color: var(--secondary-color);
+    margin: 5px 0;
+    font-weight: 500;
+    opacity: 0;
+    animation: slideUp 0.5s ease forwards;
+}
+
+.detail-item:nth-child(1) { animation-delay: 0.1s; }
+.detail-item:nth-child(2) { animation-delay: 0.2s; }
+.detail-item:nth-child(3) { animation-delay: 0.3s; }
+.detail-item:nth-child(4) { animation-delay: 0.4s; }
+.detail-item:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Steam Animation */
+.steam {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+}
+
+.steam.active {
+    animation: steamRise 1.5s ease-in infinite;
+}
+
+@keyframes steamRise {
+    0% {
+        opacity: 0.5;
+        transform: translateX(-50%) translateY(0);
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-50px);
+    }
+}
+
+/* Preset Section */
+.preset-section {
+    margin-top: 100px;
+    padding-top: 60px;
+    border-top: 2px solid var(--accent-color);
+}
+
+.section-title {
+    font-family: var(--heading-font);
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.preset-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.preset-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 25px 50px rgba(138, 75, 47, 0.2);
+}
+
+.preset-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.preset-card:hover .preset-img {
+    transform: scale(1.05);
+}
+
+.preset-name {
+    font-family: var(--heading-font);
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    padding: 20px 20px 10px;
+}
+
+.preset-desc {
+    font-size: 0.95rem;
+    color: #795548;
+    padding: 0 20px 15px;
+    line-height: 1.5;
+}
+
+.preset-price {
+    font-family: var(--heading-font);
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    font-weight: bold;
+    padding: 0 20px 15px;
+}
+
+.preset-btn {
+    width: calc(100% - 40px);
+    margin: 0 20px 20px;
+    padding: 12px;
+    background: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.preset-btn:hover {
+    background: var(--primary-color);
+}
+
+/* Button */
+.btn {
+    color: white;
+    padding: 12px 30px;
+    font-weight: 600;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+/* Footer */
+.footer {
+    background: var(--secondary-color);
+    padding: 60px 5%;
+    text-align: center;
+    margin-top: 80px;
+}
+
+.footer-text {
+    font-size: 1.1rem;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.social-icons a {
+    color: white;
+    font-size: 1.5rem;
+    margin: 0 15px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-icons a:hover {
+    color: var(--primary-color);
+    transform: scale(1.2);
+}
+
+/* Responsive */
+@media screen and (max-width: 1024px) {
+    .mixologist-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .page-heading {
+        font-size: 2.5rem;
+    }
+
+    .customizer-section {
+        padding: 30px;
+    }
+
+    .preset-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .drink-page {
+        padding: 100px 3% 60px;
+    }
+
+    .page-heading {
+        font-size: 2rem;
+    }
+
+    .page-intro {
+        font-size: 1rem;
+    }
+
+    .customizer-section {
+        padding: 20px;
+    }
+
+    .option-buttons {
+        gap: 8px;
+    }
+
+    .option-btn {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .preset-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .nav-links {
+        display: none;
+    }
+}
