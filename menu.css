@@ -19,7 +19,7 @@ body {
     display: flex !important;
     justify-content: flex-start !important;
     align-items: center !important;
-    background: #F8F1E9 !important;
+    background: radial-gradient(circle at top left, #fdf3e6 0%, #f8e7d2 40%, #f2dac0 75%, #edd0b2 100%) !important;
     padding-left: 250px !important;
 }
 
@@ -31,7 +31,7 @@ body {
     gap: 40px !important;
     width: auto !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 80px 0 0 0 !important; /* push content below fixed header */
 }
 
 .menu-buttons {
@@ -44,13 +44,15 @@ body {
 
 
 .flipbook {
-    width: 1200px !important;
-    height: 720px !important;
+    width: 1000px !important;
+    height: 600px !important;
     position: absolute !important;
-    top: 47% !important;
-    left: 32.5% !important;
+    top: 50% !important;
+    left: 36% !important;
     transform: translate(-50%, -50%) !important; /* centered initially */
-    transition: transform 0.8s ease; /* smooth slide effect */
+    border-radius: 22px !important;
+    /* removed heavy box-shadow behind the book */
+    transition: transform 0.8s ease; /* smooth slide */
     cursor: pointer;
 }
 
@@ -117,7 +119,9 @@ body {
     justify-content: center;
     align-items: center;
     gap: 10px;
+    border-radius: 18px;
     border: 1px solid rgba(0, 0, 0, 0.11);
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.07);
 }
 
 .page img{
@@ -133,21 +137,42 @@ body {
 
 
 .menu-btn {
-    padding: 8px 50px;  /* thinner vertically, wider horizontally */
-    font-size: 16px;
+    padding: 6px 40px;  /* slightly smaller */
+    font-size: 14px;
     font-weight: bold;
     color: #fff;
-    background-color: #6B5546;
+    background: linear-gradient(135deg, #7b5b46 0%, #6b5546 50%, #5a483b 100%);
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background 0.25s ease, transform 0.18s ease, box-shadow 0.25s ease, filter 0.25s ease;
     font-family: "Poppins", sans-serif;
-    margin-top: 730px !important; /* moves all 3 buttons down */
+    margin-top: 650px !important; /* move buttons a bit higher with smaller book */
     margin-left: 145px !important; /* moves them to the right */
     margin-right: -10px !important; /* negative margin to bring buttons closer */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .menu-btn:hover {
-    background-color: #8B6F5F;
+    background: linear-gradient(135deg, #8b6f5f 0%, #7b5b46 50%, #6b5546 100%);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.28);
+    filter: brightness(1.03);
+}
+
+.menu-btn:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+    filter: brightness(0.96);
+}
+
+.menu-btn.active {
+    background: linear-gradient(135deg, #a27a5f 0%, #8b6f5f 50%, #7b5b46 100%);
+    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.3);
+}
+
+.menu-btn.pressed {
+    transform: translateY(-1px) scale(1.01);
 }

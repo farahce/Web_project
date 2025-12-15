@@ -4,11 +4,37 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap"
+            rel="stylesheet"
+    />
+    <!-- icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- shared layout / nav styles -->
+    <link rel="stylesheet" href="Home_page.css" />
+    <!-- page-specific styles -->
     <link rel="stylesheet" href="menu.css" />
     <title>MENU</title>
 </head>
 
 <body>
+<header class="w-full">
+    <nav class="nav">
+        <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
+        <ul class="nav-links">
+            <li><a href="Home_page.html">Home</a></li>
+            <li><a href="menu.html">Menu</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="Location.html">Our Location</a></li>
+            <li><a href="login.html" class="nav-login-btn">Login</a></li>
+        </ul>
+    </nav>
+</header>
+
 <div class="menu-container">
 
     <div class="flipbook">
@@ -67,13 +93,13 @@
 <script>
     $(document).ready(function() {
         var flipbookOpened = false;
-        
+
         $(".flipbook").turn();
 
         // Wait for turn.js to finish initializing, then resize the flipbook and apply styles
         setTimeout(function() {
-            // Resize the flipbook using turn.js size method
-            $(".flipbook").turn("size", 1200, 720);
+            // Resize the flipbook using turn.js size method (match CSS)
+            $(".flipbook").turn("size", 1000, 600);
 
             var $coverImage = $(".cover-bg-image");
             if ($coverImage.length) {
@@ -111,27 +137,50 @@
             // Only trigger on the cover page (page 1)
             if ($(this).turn("page") === 1 && !flipbookOpened) {
                 flipbookOpened = true;
-                
+
                 // Add class to move flipbook to the right and open simultaneously
                 $(this).addClass("opened");
                 $(".flipbook").turn("next");
             }
         });
 
+        // Small helper to visually set an active button
+        function setActiveButton(selector) {
+            $(".menu-btn").removeClass("active");
+            $(selector).addClass("active");
+        }
+
+        // Tiny "press" animation class toggle
+        function pressButton(el) {
+            $(el).addClass("pressed");
+            setTimeout(function () {
+                $(el).removeClass("pressed");
+            }, 150);
+        }
+
         // Handle Donuts button click to navigate to page 4
         $("#donutsBtn").on("click", function() {
             $(".flipbook").turn("page", 4);
+            setActiveButton("#donutsBtn");
+            pressButton(this);
         });
 
         // Handle Drinks button click to navigate to page 6 (first DRINKS page)
         $("#drinksBtn").on("click", function() {
             $(".flipbook").turn("page", 6);
+            setActiveButton("#drinksBtn");
+            pressButton(this);
         });
 
         // Handle Cookies button click to navigate to page 8 (first COOKIES page)
         $("#cookiesBtn").on("click", function() {
             $(".flipbook").turn("page", 8);
+            setActiveButton("#cookiesBtn");
+            pressButton(this);
         });
+
+        // Set initial active button (optional – here we pick Donuts/page 4)
+        setActiveButton("#donutsBtn");
     });
 </script>
 </body>
