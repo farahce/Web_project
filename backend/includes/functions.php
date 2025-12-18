@@ -87,7 +87,7 @@ function logActivity($conn, $user_id, $action, $details = null) {
     $action = $conn->real_escape_string($action);
     $details = $details ? $conn->real_escape_string($details) : null;
 
-    $sql = "INSERT INTO activity_log (user_id, action, details) 
+    $sql = "INSERT INTO activity_log (user_id, action, details)
             VALUES ($user_id, '$action', '$details')";
 
     return $conn->query($sql);

@@ -1,59 +1,56 @@
-<?php global $conn;
+<?php
 /**
  * User Registration API
  * POST /api/register
  */
 
-// Get JSON input
-$data = getJsonInput();
+global $conn;
+$method = $_SERVER['REQUEST_METHOD'];
 
-// Validate required fields
-if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
-    sendResponse('error', 'Missing required fields: username, email, password');
-}
+if ($method === 'POST') {
+    // Get JSON input
+    $data = getJsonInput();
 
-// Sanitize input
-$username = sanitize($conn, $data['username']);
-$email = sanitize($conn, $data['email']);
-$password = $data['password'];
-$full_name = sanitize($conn, isset($data['full_name']) ? $data['full_name'] : '');
+    // Validate required fields
+    if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
+        sendResponse('error', 'Username, email, and password are required');
+    }
 
-// Validate email
-if (!isValidEmail($email)) {
-    sendResponse('error', 'Invalid email format');
-}
+    // Sanitize input
+    $username = sanitize($conn, $data['username']);
+    $email = sanitize($conn, $data['email']);
+    $password = $data['password'];
 
-// Validate password strength
-if (!isStrongPassword($password)) {
-    sendResponse('error', 'Password must be at least 8 characters with uppercase, lowercase, and numbers');
-}
+    // Validate email
+    if (!isValidEmail($email)) {
+        sendResponse('error', 'Invalid email format');
+    }
 
-// Check if user already exists
-$check_sql = "SELECT id FROM users WHERE email = '$email' OR username = '$username'";
-$check_result = $conn->query($check_sql);
+    // Check if user already exists
+    $sql = "SELECT id FROM users WHERE email = '$email'";
+    $result = $conn->query($sql);
 
-if ($check_result->num_rows > 0) {
-    sendResponse('error', 'User already exists with this email or username');
-}
+    if ($result->num_rows > 0) {
+        sendResponse('error', 'Email already registered');
+    }
 
-// Hash password
-$hashed_password = hashPassword($password);
+    // Hash password
+    $hashed_password = hashPassword($password);
 
-// Insert user
-$insert_sql = "INSERT INTO users (username, email, password, full_name) 
-               VALUES ('$username', '$email', '$hashed_password', '$full_name')";
+    // Insert user
+    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hashed_password')";
 
-if ($conn->query($insert_sql) === TRUE) {
-    $user_id = $conn->insert_id;
-
-    sendResponse('success', 'User registered successfully', [
-        'user_id' => $user_id,
-        'username' => $username,
-        'email' => $email
-    ]);
+    if ($conn->query($sql)) {
+        $user_id = $conn->insert_id;
+        sendResponse('success', 'Registration successful', [
+            'user_id' => $user_id,
+            'username' => $username,
+            'email' => $email
+        ]);
+    } else {
+        sendResponse('error', 'Registration failed: ' . $conn->error);
+    }
 } else {
-    sendResponse('error', 'Registration failed: ' . $conn->error);
+    sendResponse('error', 'Method not allowed');
 }
-
 ?>
-

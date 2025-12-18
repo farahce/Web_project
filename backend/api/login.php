@@ -1,61 +1,56 @@
-<?php global $conn;
+<?php
 /**
- * User Login API
- * POST /api/login
+ * User Registration API
+ * POST /api/register
  */
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-header('Content-Type: application/json');
 
-// INCLUDE THESE FIRST!
-$mysqli = include '../config/database.php';
-include '../includes/functions.php';
+global $conn;
+$method = $_SERVER['REQUEST_METHOD'];
 
-// NOW use the ggffunctions
-// Get JSON input
-$data = getJsonInput();
+if ($method === 'POST') {
+    // Get JSON input
+    $data = getJsonInput();
 
-// Validate required fields
-if (!isset($data['email']) || !isset($data['password'])) {
-    sendResponse('error', 'Email and password are required');
+    // Validate required fields
+    if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
+        sendResponse('error', 'Username, email, and password are required');
+    }
+
+    // Sanitize input
+    $username = sanitize($conn, $data['username']);
+    $email = sanitize($conn, $data['email']);
+    $password = $data['password'];
+
+    // Validate email
+    if (!isValidEmail($email)) {
+        sendResponse('error', 'Invalid email format');
+    }
+
+    // Check if user already exists
+    $sql = "SELECT id FROM users WHERE email = '$email'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        sendResponse('error', 'Email already registered');
+    }
+
+    // Hash password
+    $hashed_password = hashPassword($password);
+
+    // Insert user
+    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hashed_password')";
+
+    if ($conn->query($sql)) {
+        $user_id = $conn->insert_id;
+        sendResponse('success', 'Registration successful', [
+            'user_id' => $user_id,
+            'username' => $username,
+            'email' => $email
+        ]);
+    } else {
+        sendResponse('error', 'Registration failed: ' . $conn->error);
+    }
+} else {
+    sendResponse('error', 'Method not allowed');
 }
-
-// Sanitize input
-$email = sanitize($conn, $data['email']);
-$password = $data['password'];
-
-// Validate email
-if (!isValidEmail($email)) {
-    sendResponse('error', 'Invalid email format');
-}
-
-// Find user
-$sql = "SELECT id, username, email, password FROM users WHERE email = '$email'";
-$result = $conn->query($sql);
-
-if ($result->num_rows === 0) {
-    sendResponse('error', 'User not found');
-}
-
-$user = $result->fetch_assoc();
-
-// Verify password
-if (!verifyPassword($password, $user['password'])) {
-    sendResponse('error', 'Invalid password');
-}
-
-// Set session
-$_SESSION['user_id'] = $user['id'];
-$_SESSION['username'] = $user['username'];
-$_SESSION['email'] = $user['email'];
-
-// Log activity
-logActivity($conn, $user['id'], 'login', 'User logged in');
-
-sendResponse('success', 'Login successful', [
-    'user_id' => $user['id'],
-    'username' => $user['username'],
-    'email' => $user['email']
-]);
-
 ?>

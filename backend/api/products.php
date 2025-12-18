@@ -1,58 +1,56 @@
-<?php global $conn;
+<?php
 /**
- * Products API
- * GET /api/products
- * GET /api/products?category=donuts
+ * User Login API
+ * POST /api/login
  */
 
+global $conn;
 $method = $_SERVER['REQUEST_METHOD'];
 
-if ($method === 'GET') {
-    // Get category filter if provided
-    $category = isset($_GET['category']) ? sanitize($conn, $_GET['category']) : null;
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
-    $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
+if ($method === 'POST') {
+    // Get JSON input
+    $data = getJsonInput();
 
-    // Build query
-    $sql = "SELECT * FROM products";
-
-    if ($category) {
-        $sql .= " WHERE category = '$category'";
+    // Validate required fields
+    if (!isset($data['email']) || !isset($data['password'])) {
+        sendResponse('error', 'Email and password are required');
     }
 
-    $sql .= " LIMIT $limit OFFSET $offset";
+    // Sanitize input
+    $email = sanitize($conn, $data['email']);
+    $password = $data['password'];
 
-    // Execute query
+    // Validate email
+    if (!isValidEmail($email)) {
+        sendResponse('error', 'Invalid email format');
+    }
+
+    // Find user
+    $sql = "SELECT id, username, email, password FROM users WHERE email = '$email'";
     $result = $conn->query($sql);
 
-    if (!$result) {
-        sendResponse('error', 'Query failed: ' . $conn->error);
+    if ($result->num_rows === 0) {
+        sendResponse('error', 'User not found');
     }
 
-    // Fetch products
-    $products = [];
-    while ($row = $result->fetch_assoc()) {
-        $products[] = $row;
+    $user = $result->fetch_assoc();
+
+    // Verify password
+    if (!verifyPassword($password, $user['password'])) {
+        sendResponse('error', 'Invalid password');
     }
 
-    // Get total count
-    $count_sql = "SELECT COUNT(*) as total FROM products";
-    if ($category) {
-        $count_sql .= " WHERE category = '$category'";
-    }
-    $count_result = $conn->query($count_sql);
-    $count_row = $count_result->fetch_assoc();
+    // Set session
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    $_SESSION['email'] = $user['email'];
 
-    sendResponse('success', 'Products retrieved successfully', [
-        'products' => $products,
-        'total' => $count_row['total'],
-        'limit' => $limit,
-        'offset' => $offset
+    sendResponse('success', 'Login successful', [
+        'user_id' => $user['id'],
+        'username' => $user['username'],
+        'email' => $user['email']
     ]);
-
 } else {
-    sendResponse('error', 'Method not allowed. Use GET');
+    sendResponse('error', 'Method not allowed');
 }
-
 ?>
-
