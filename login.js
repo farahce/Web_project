@@ -15,12 +15,11 @@ function togglePassword() {
 }
 
 // Handle Form Submission
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const rememberMe = document.querySelector('input[name="remember"]').checked;
 
     // Basic validation
     if (!email || !password) {
@@ -35,19 +34,29 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         return;
     }
 
-    // Simulate login process
-    console.log('Login attempt:', {
+    // Call API
+    const response = await apiCall('/api/login', 'POST', {
         email: email,
-        password: password,
-        rememberMe: rememberMe
+        password: password
     });
 
-    // Show success message
-    alert('Login successful! Welcome to Dafah.');
+    if (response.status === 'success') {
+        // Save user data to localStorage
+        localStorage.setItem('user', JSON.stringify(response.data));
+        localStorage.setItem('user_id', response.data.user_id);
+
+        alert('Login successful! Welcome to Dafah.');
+
+        // Redirect to home page
+        window.location.href = 'Home_page.html';
+    } else {
+        alert('Login failed: ' + response.message);
+    }
 
     // Reset form
     this.reset();
 });
+
 
 // Add smooth focus effects
 document.querySelectorAll('.input-wrapper input').forEach(input => {

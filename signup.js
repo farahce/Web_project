@@ -327,3 +327,39 @@ document.addEventListener('keypress', (e) => {
 // After successful signup
 emailMarketing.sendWelcomeEmail(formState.email);
 emailMarketing.subscribe(formState.email);
+// Handle Signup Form Submission
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    // Validation
+    if (!username || !email || !password || !confirmPassword) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+
+    // Call API
+    const response = await apiCall('/api/register', 'POST', {
+        username: username,
+        email: email,
+        password: password
+    });
+
+    if (response.status === 'success') {
+        alert('Registration successful! Please login.');
+        window.location.href = 'login.html';
+    } else {
+        alert('Registration failed: ' + response.message);
+    }
+
+    this.reset();
+});

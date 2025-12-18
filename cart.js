@@ -211,3 +211,39 @@ window.addToCart = function(item) {
     }
     cartManager.addItem(item);
 };
+// Load cart items on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    const userId = localStorage.getItem('user_id');
+
+    if (!userId) {
+        alert('Please login first');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const response = await apiCall('/api/cart', 'GET');
+
+    if (response.status === 'success') {
+        const cartItems = response.data.items;
+
+        // Display cart items
+        const cartContainer = document.getElementById('cart-container');
+        cartContainer.innerHTML = '';
+
+        let total = 0;
+        cartItems.forEach(item => {
+            const itemHTML = `
+                <div class="cart-item">
+                    <h4>${item.product_name}</h4>
+                    <p>Quantity: ${item.quantity}</p>
+                    <p>Price: $${item.unit_price}</p>
+                    <p>Total: $${item.total_price}</p>
+                </div>
+            `;
+            cartContainer.innerHTML += itemHTML;
+            total += item.total_price;
+        });
+
+        document.getElementById('cart-total').textContent = `Total: $${total.toFixed(2)}`;
+    }
+});

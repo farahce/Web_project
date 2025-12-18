@@ -128,3 +128,56 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
         }, 1500);
     });
 });
+// Load products on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    const response = await apiCall('/api/products?category=donuts', 'GET');
+
+    if (response.status === 'success') {
+        const products = response.data.products;
+
+        // Display products
+        const productsContainer = document.getElementById('products-container');
+        productsContainer.innerHTML = '';
+
+        products.forEach(product => {
+            const productHTML = `
+                <div class="product-card">
+                    <img src="${product.image_url || 'images/placeholder.jpg'}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <div class="price">
+                        <span class="original">$${product.price}</span>
+                        <span class="discount">$${product.discount_price}</span>
+                    </div>
+                    <button onclick="addToCart(${product.id})">Add to Cart</button>
+                </div>
+            `;
+            productsContainer.innerHTML += productHTML;
+        });
+    } else {
+        alert('Failed to load products: ' + response.message);
+    }
+});
+
+// Add to cart function
+async function addToCart(productId) {
+    const userId = localStorage.getItem('user_id');
+
+    if (!userId) {
+        alert('Please login first');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const response = await apiCall('/api/cart', 'POST', {
+        product_id: productId,
+        quantity: 1
+    });
+
+
+    if (response.status === 'success') {
+        alert('Item added to cart!');
+    } else {
+        alert('Failed to add to cart: ' + response.message);
+    }
+}
