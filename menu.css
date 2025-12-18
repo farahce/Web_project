@@ -1,6 +1,7 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-*{
+/* ================= RESET ================= */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -10,11 +11,10 @@
 html, body {
     height: 100% !important;
     width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
     overflow: hidden;
 }
 
+/* ================= BODY ================= */
 body {
     display: flex !important;
     justify-content: flex-start !important;
@@ -23,45 +23,34 @@ body {
     padding-left: 250px !important;
 }
 
+/* ================= MENU CONTAINER ================= */
 .menu-container {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 40px !important;
-    width: auto !important;
-    margin: 0 !important;
-    padding: 80px 0 0 0 !important; /* push content below fixed header */
+    padding-top: 80px !important;
 }
 
-.menu-buttons {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 0px !important; /* no space between buttons */
-    justify-content: center !important;
-    width: 100% !important;
-}
-
-
+/* ================= FLIPBOOK ================= */
 .flipbook {
     width: 1000px !important;
     height: 600px !important;
     position: absolute !important;
     top: 50% !important;
     left: 36% !important;
-    transform: translate(-50%, -50%) !important; /* centered initially */
+    transform: translate(-50%, -50%) !important;
     border-radius: 22px !important;
-    /* removed heavy box-shadow behind the book */
-    transition: transform 0.8s ease; /* smooth slide */
+    transition: transform 0.8s ease;
     cursor: pointer;
 }
 
 .flipbook.opened {
-    transform: translate(calc(-50% + 250px), -50%) !important; /* moved to the right */
+    transform: translate(calc(-50% + 250px), -50%) !important;
 }
 
-
-
+/* ================= HARD / COVER ================= */
 .flipbook .hard {
     background-color: #f1c292 !important;
     color: #fff;
@@ -75,7 +64,9 @@ body {
     background-color: transparent !important;
 }
 
-.flipbook .hard.cover-page .cover-bg-image {
+/* PROTECTED COVER IMAGE */
+.cover-bg-image {
+    all: unset;
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
@@ -83,16 +74,12 @@ body {
     height: 99.9% !important;
     object-fit: cover !important;
     transform: translate(-50%, -50%) !important;
-    z-index: 0 !important;
     pointer-events: none !important;
+    z-index: 0 !important;
 }
 
-.flipbook .hard.cover-page .cover-content {
-    position: relative;
-    z-index: 1;
-}
-
-.flipbook .hard.cover-page .menu-text-vertical {
+/* COVER TEXT */
+.menu-text-vertical {
     position: absolute !important;
     right: -30px !important;
     top: 50% !important;
@@ -105,74 +92,300 @@ body {
     letter-spacing: 12px !important;
 }
 
-.flipbook .hard small{
-    font-style: italic;
-    font-weight: lighter;
-    opacity: 0.7;
-    font-size: 14px;
-}
-
+/* ================= PAGES ================= */
 .flipbook .page {
-    background: #F5E4D3;
+    background: linear-gradient(135deg, #F5E4D3 0%, #f8e7d2 50%, #F5E4D3 100%);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
     border-radius: 18px;
-    border: 1px solid rgba(0, 0, 0, 0.11);
-    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.07);
+    border: 2px solid rgba(123, 91, 70, 0.15);
+    box-shadow:
+        inset 0 0 30px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
-.page img{
-    width: 70%;
-    object-fit: cover;
-    margin: auto;
+.flipbook .page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(123, 91, 70, 0.3), transparent);
+    opacity: 0.6;
 }
 
-.flipbook .page small{
-    font-size: 14px;
-    margin-bottom: 10px;
+.flipbook .page::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(123, 91, 70, 0.2), transparent);
+    opacity: 0.4;
 }
 
+.flipbook .page small {
+    font-size: 20px;
+    font-weight: 800;
+    color: #5a483b;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    align-self: flex-start;
+    position: relative;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #7b5b46, #5a483b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ================= MENU ITEM STRUCTURE ================= */
+.flipbook .page > div:not(.hard) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 18px;
+}
+
+.flipbook .page > div.menu-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    cursor: pointer;
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(123, 91, 70, 0.1);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(2px);
+}
+
+.flipbook .page > div.menu-item:nth-of-type(odd) {
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+.flipbook .page > div.menu-item:nth-of-type(even) {
+    animation: fadeInRight 0.6s ease-out;
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.flipbook .page > div.menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.flipbook .page > div.menu-item:hover::before {
+    left: 100%;
+}
+
+.flipbook .page > div.menu-item:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(123, 91, 70, 0.3);
+    box-shadow:
+        0 8px 20px rgba(123, 91, 70, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transform: translateX(4px);
+}
+
+/* ================= MENU ITEM IMAGES ================= */
+.flipbook .page:not(.hard) .menu-item img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #faf0e6, #f8e7d2, #f2dac0);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.15),
+        inset 0 2px 4px rgba(255, 255, 255, 0.5),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: block;
+}
+
+.flipbook .page:not(.hard) .menu-item:hover img {
+    transform: scale(1.08) rotate(2deg);
+    box-shadow:
+        0 12px 28px rgba(123, 91, 70, 0.25),
+        0 6px 16px rgba(0, 0, 0, 0.2),
+        inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    border-color: rgba(123, 91, 70, 0.3);
+}
+
+.flipbook .page:not(.hard) .menu-item:nth-child(even):hover img {
+    transform: scale(1.08) rotate(-2deg);
+}
+
+/* ================= MENU ITEM INFO ================= */
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    position: relative;
+}
+
+.item-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #4a3a2b;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease, transform 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.flipbook .page > div.menu-item:hover .item-name {
+    color: #7b5b46;
+    transform: translateX(2px);
+}
+
+.item-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: #8b6f5f;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    background: linear-gradient(135deg, #8b6f5f, #7b5b46);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.flipbook .page > div.menu-item:hover .item-price {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #a27a5f, #8b6f5f);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.item-price::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background: #8b6f5f;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.flipbook .page > div.menu-item:hover .item-price::before {
+    opacity: 1;
+}
+
+/* ================= BUTTONS ================= */
+.menu-buttons {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    width: 100%;
+}
 
 .menu-btn {
-    padding: 6px 40px;  /* slightly smaller */
-    font-size: 14px;
-    font-weight: bold;
+    padding: 10px 45px;
+    font-size: 15px;
+    font-weight: 700;
     color: #fff;
-    background: linear-gradient(135deg, #7b5b46 0%, #6b5546 50%, #5a483b 100%);
+    background: linear-gradient(135deg, #7b5b46, #6b5546, #5a483b);
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.25s ease, transform 0.18s ease, box-shadow 0.25s ease, filter 0.25s ease;
-    font-family: "Poppins", sans-serif;
-    margin-top: 650px !important; /* move buttons a bit higher with smaller book */
-    margin-left: 145px !important; /* moves them to the right */
-    margin-right: -10px !important; /* negative margin to bring buttons closer */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.22);
-    letter-spacing: 0.08em;
+    margin-top: 650px !important;
+    margin-left: 145px !important;
+    margin-right: -10px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        0 4px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.menu-btn:hover::before {
+    left: 100%;
 }
 
 .menu-btn:hover {
-    background: linear-gradient(135deg, #8b6f5f 0%, #7b5b46 50%, #6b5546 100%);
-    transform: translateY(-3px) scale(1.03);
-    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.28);
-    filter: brightness(1.03);
-}
-
-.menu-btn:active {
-    transform: translateY(0px) scale(0.97);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
-    filter: brightness(0.96);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow:
+        0 12px 28px rgba(123, 91, 70, 0.35),
+        0 6px 12px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #8b6f5f, #7b5b46, #6b5546);
 }
 
 .menu-btn.active {
-    background: linear-gradient(135deg, #a27a5f 0%, #8b6f5f 50%, #7b5b46 100%);
-    box-shadow: 0 18px 32px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #a27a5f, #8b6f5f, #7b5b46);
+    box-shadow:
+        0 10px 24px rgba(162, 122, 95, 0.4),
+        0 4px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.menu-btn.pressed {
-    transform: translateY(-1px) scale(1.01);
+.menu-btn:active {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.2),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
