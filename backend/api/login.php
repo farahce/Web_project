@@ -8,10 +8,10 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
 // INCLUDE THESE FIRST!
-$conn = include '../config/database.php';
+$mysqli = include '../config/database.php';
 include '../includes/functions.php';
 
-// NOW use the functions
+// NOW use the ggffunctions
 // Get JSON input
 $data = getJsonInput();
 

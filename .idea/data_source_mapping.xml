@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/b5b76a4e-b8f7-48f2-a6a7-cbb89b04071d/console.sql" value="b5b76a4e-b8f7-48f2-a6a7-cbb89b04071d" />
-    <file url="file://$PROJECT_DIR$/backend/api/cart.php" value="b5b76a4e-b8f7-48f2-a6a7-cbb89b04071d" />
-    <file url="file://$PROJECT_DIR$/backend/api/login.php" value="b5b76a4e-b8f7-48f2-a6a7-cbb89b04071d" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/d873ac96-34bb-431e-b3c8-a412f2f7a1c3/console.sql" value="d873ac96-34bb-431e-b3c8-a412f2f7a1c3" />
   </component>
 </project>
