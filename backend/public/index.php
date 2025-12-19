@@ -49,6 +49,16 @@ if (strpos($request_uri, '/api/register') !== false) {
     include '../api/login.php';
 } elseif (strpos($request_uri, '/api/logout') !== false) {
     include '../api/logout.php';
+} elseif (strpos($request_uri, '/api/admin/products') !== false) {
+    include '../api/admin/products.php';
+} elseif (strpos($request_uri, '/api/admin/orders') !== false) {
+    include '../api/admin/orders.php';
+} elseif (strpos($request_uri, '/api/admin/customers') !== false) {
+    include '../api/admin/customers.php';
+} elseif (strpos($request_uri, '/api/admin/dashboard') !== false) {
+    include '../api/admin/dashboard.php';
+} elseif (strpos($request_uri, '/api/admin/analytics') !== false) {
+    include '../api/admin/analytics.php';
 } elseif (strpos($request_uri, '/api/products') !== false) {
     include '../api/products.php';
 } elseif (strpos($request_uri, '/api/cart') !== false) {
