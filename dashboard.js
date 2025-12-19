@@ -9,7 +9,18 @@ let dashboardState = {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Load user data first
     loadUserData();
+
+    // Initialize auth UI
+    initializeAuth();
+
+    // Setup logout button
+    setupLogoutButton('.logout-btn');
+
+    // Setup profile button
+    setupProfileButton();
+
     loadOrders();
     calculateRewards();
     updateDashboard();
@@ -18,23 +29,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Load User Data
 function loadUserData() {
-    const userData = localStorage.getItem('dafah_user');
+    // Try to get user from localStorage (from login system)
+    let userData = localStorage.getItem('user');
+
+    // If not found, try the old key (for backward compatibility)
+    if (!userData) {
+        userData = localStorage.getItem('dafah_user');
+    }
+
     if (userData) {
         dashboardState.user = JSON.parse(userData);
-        document.getElementById('user-name').textContent = `${dashboardState.user.firstName} ${dashboardState.user.lastName}`;
+
+        // Display user info
+        const displayName = dashboardState.user.username || dashboardState.user.firstName + ' ' + dashboardState.user.lastName || 'User';
+        document.getElementById('user-name').textContent = displayName;
         document.getElementById('user-email').textContent = dashboardState.user.email;
 
         // Populate profile form
-        document.getElementById('profile-first-name').value = dashboardState.user.firstName;
-        document.getElementById('profile-last-name').value = dashboardState.user.lastName;
-        document.getElementById('profile-email').value = dashboardState.user.email;
+        document.getElementById('profile-first-name').value = dashboardState.user.firstName || '';
+        document.getElementById('profile-last-name').value = dashboardState.user.lastName || '';
+        document.getElementById('profile-email').value = dashboardState.user.email || '';
         document.getElementById('profile-phone').value = dashboardState.user.phone || '';
         document.getElementById('profile-address').value = dashboardState.user.address || '';
         document.getElementById('profile-city').value = dashboardState.user.city || '';
         document.getElementById('profile-zip').value = dashboardState.user.zip || '';
     } else {
-        // Redirect to signup if not logged in
-        window.location.href = 'signup.html';
+        // No user data found - redirect to login
+        window.location.href = 'login.html';
     }
 }
 
@@ -293,3 +314,22 @@ function showToast(message, type = 'success') {
 window.addEventListener('load', () => {
     updateDashboard();
 });
+
+// ============================================
+// PROFILE BUTTON SETUP
+// ============================================
+function setupProfileButton() {
+    // Find profile button/link in dashboard page
+    const profileBtn = document.querySelector('[data-profile-btn]') ||
+        document.querySelector('.profile-btn') ||
+        document.querySelector('.user-profile') ||
+        document.querySelector('.dashboard-profile');
+
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Navigate to profile section
+            switchTab('profile');
+        });
+    }
+}

@@ -1,106 +1,81 @@
 /**
- * Shared Navigation Script
- * Updates login button across all pages based on login status
+ * nav.js
+ * Role-based navigation menu with click-to-toggle dropdown
  */
 
-// Update login button based on login status
-function updateLoginButton() {
+document.addEventListener('DOMContentLoaded', function() {
     const loginBtn = document.querySelector('.nav-login-btn');
-    if (!loginBtn) {
-        console.log('[Navigation] Login button not found');
-        return;
-    }
+    if (!loginBtn) return;
 
-    // Check if api-config functions are available
-    if (typeof isLoggedIn === 'undefined') {
-        console.log('[Navigation] isLoggedIn function not available yet');
-        return;
-    }
-    
-    if (typeof getCurrentUser === 'undefined') {
-        console.log('[Navigation] getCurrentUser function not available yet');
-        return;
-    }
+    // Get current user from localStorage
+    const user = JSON.parse(localStorage.getItem('user'));
 
-    const isLoggedInUser = isLoggedIn();
-    const user = getCurrentUser();
-    
-    console.log('[Navigation] Updating button - Logged in:', isLoggedInUser, 'User:', user);
-
-    if (isLoggedInUser && user && user.username) {
-        // User is logged in - show username and logout option
-        loginBtn.innerHTML = `<i class="fas fa-user"></i> ${user.username}`;
-        loginBtn.href = '#';
-        loginBtn.style.cursor = 'pointer';
-        loginBtn.style.textDecoration = 'none';
-        loginBtn.title = 'Click to logout';
-        
-        // Remove old click handler and add new one
-        loginBtn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm('Are you sure you want to logout?')) {
-                if (typeof logout === 'function') {
-                    logout();
-                } else {
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('user_id');
-                    window.location.href = 'login.html';
-                }
-            }
-            return false;
-        };
-        
-        console.log('[Navigation] Button updated to show username:', user.username);
-    } else {
-        // User is not logged in - show login button
+    if (!user) {
+        // Not logged in
         loginBtn.innerHTML = 'Login';
         loginBtn.href = 'login.html';
         loginBtn.onclick = null;
         loginBtn.style.cursor = 'pointer';
-        console.log('[Navigation] Button updated to show Login');
+        return;
     }
-}
 
-// Wait for API config to load, then update
-function waitForApiConfig() {
-    if (typeof isLoggedIn !== 'undefined' && typeof getCurrentUser !== 'undefined') {
-        updateLoginButton();
+    // Set username
+    loginBtn.innerHTML = `<i class="fas fa-user"></i> ${user.username}`;
+    loginBtn.href = '#';
+    loginBtn.style.cursor = 'pointer';
+    loginBtn.style.position = 'relative';
+
+    // Create dropdown
+    const dropdown = document.createElement('ul');
+    dropdown.className = 'dropdown';
+    dropdown.style.display = 'none';
+    dropdown.style.position = 'absolute';
+    dropdown.style.top = '100%';
+    dropdown.style.left = '0';
+    dropdown.style.backgroundColor = '#fff';
+    dropdown.style.border = '1px solid #ccc';
+    dropdown.style.padding = '10px';
+    dropdown.style.listStyle = 'none';
+    dropdown.style.margin = '0';
+    dropdown.style.minWidth = '150px';
+    dropdown.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+
+    // Role-based menu links
+    if (user.role === 'admin') {
+        dropdown.innerHTML = `
+            <li><a href="admin.html">Admin Profile</a></li>
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        `;
     } else {
-        setTimeout(waitForApiConfig, 100);
+        dropdown.innerHTML = `
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        `;
     }
-}
 
-// Initialize when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        waitForApiConfig();
-        // Also update after a delay
-        setTimeout(updateLoginButton, 500);
+    loginBtn.appendChild(dropdown);
+
+    // Toggle dropdown only when clicking username, not links inside
+    loginBtn.addEventListener('click', function(e) {
+        if (e.target === loginBtn) {
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
     });
-} else {
-    waitForApiConfig();
-    setTimeout(updateLoginButton, 500);
-}
 
-// Update on window load
-window.addEventListener('load', function() {
-    setTimeout(updateLoginButton, 300);
-});
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!loginBtn.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
 
-// Update when page becomes visible (for multi-tab support)
-document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-        setTimeout(updateLoginButton, 100);
+    // Logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
     }
 });
-
-// Update on storage change (for multi-tab support)
-window.addEventListener('storage', function(e) {
-    if (e.key === 'user' || e.key === 'user_id') {
-        setTimeout(updateLoginButton, 100);
-    }
-});
-
-// Make function globally available for manual calls
-window.updateLoginButton = updateLoginButton;

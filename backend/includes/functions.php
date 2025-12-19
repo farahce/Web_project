@@ -64,11 +64,11 @@ function sanitize($conn, $input) {
 function getJsonInput() {
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
-    
+
     if (json_last_error() !== JSON_ERROR_NONE) {
         sendResponse('error', 'Invalid JSON input: ' . json_last_error_msg());
     }
-    
+
     return $data ? $data : [];
 }
 
@@ -80,6 +80,36 @@ function isLoggedIn() {
 }
 
 /**
+ * Get current user role
+ */
+function getCurrentUserRole() {
+    return isset($_SESSION['role']) ? $_SESSION['role'] : null;
+}
+
+/**
+ * Check if user is admin
+ */
+function isAdmin() {
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+/**
+ * Check if user is regular user
+ */
+function isUser() {
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'user';
+}
+
+/**
+ * Require admin role - redirect if not admin
+ */
+function requireAdmin() {
+    if (!isAdmin()) {
+        sendResponse('error', 'Access denied. Admin privileges required.');
+    }
+}
+
+/**
  * Get current user ID
  * Checks session first, then falls back to checking Authorization header or request body
  */
@@ -88,7 +118,7 @@ function getCurrentUserId() {
     if (isset($_SESSION['user_id'])) {
         return $_SESSION['user_id'];
     }
-    
+
     // Fallback: Check if user_id is in request body (for debugging/fallback)
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
@@ -110,7 +140,7 @@ function getCurrentUserId() {
             $check->close();
         }
     }
-    
+
     return null;
 }
 
@@ -123,19 +153,19 @@ function logActivity($conn, $user_id, $action, $details = null) {
     if ($check_table->num_rows === 0) {
         return false; // Table doesn't exist
     }
-    
+
     // Use prepared statement for security
     $sql = "INSERT INTO activity_log (user_id, action, details) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    
+
     if (!$stmt) {
         return false;
     }
-    
+
     $stmt->bind_param("iss", $user_id, $action, $details);
     $result = $stmt->execute();
     $stmt->close();
-    
+
     return $result;
 }
 

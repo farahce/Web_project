@@ -2,7 +2,7 @@
 function togglePassword() {
     const passwordInput = document.getElementById('password');
     const toggleIcon = document.querySelector('.toggle-password i');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         toggleIcon.classList.remove('fa-eye');
@@ -40,10 +40,12 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         if (result.status === 'success' && result.data) {
             // Store user data in localStorage
             localStorage.setItem('user_id', result.data.user_id);
+            localStorage.setItem('user_role', result.data.role);
             localStorage.setItem('user', JSON.stringify({
                 id: result.data.user_id,
                 username: result.data.username,
-                email: result.data.email
+                email: result.data.email,
+                role: result.data.role
             }));
 
             // Show success notification
@@ -52,9 +54,13 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             // Trigger storage event for multi-tab support
             window.dispatchEvent(new Event('storage'));
 
-            // Redirect to home page after a short delay
+            // Redirect based on user role
             setTimeout(() => {
-                window.location.href = 'Home_page.html';
+                if (result.data.role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'Home_page.html';
+                }
             }, 500);
         } else {
             // Show error notification

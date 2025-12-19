@@ -6,6 +6,24 @@ const sidebarToggle = document.getElementById('sidebarToggle');
 const sidebar = document.querySelector('.sidebar');
 const sidebarNav = document.querySelector('.sidebar-nav');
 
+// ============================================
+// ROLE-BASED ACCESS CONTROL
+// ============================================
+// Check if user is admin on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Require admin role
+    requireAdmin();
+
+    // Initialize auth UI
+    initializeAuth();
+
+    // Setup logout button
+    setupLogoutButton('.logout-btn');
+
+    // Setup profile button
+    setupProfileButton();
+});
+
 // Section titles
 const sectionTitles = {
     dashboard: 'Dashboard',
@@ -128,4 +146,27 @@ window.addEventListener('load', () => {
     });
 });
 
-console.log('Admin Dashboard loaded successfully!');
+// ============================================
+// PROFILE BUTTON SETUP
+// ============================================
+function setupProfileButton() {
+    // Find profile button/link in admin page
+    const profileBtn = document.querySelector('[data-profile-btn]') ||
+        document.querySelector('.profile-btn') ||
+        document.querySelector('.user-profile') ||
+        document.querySelector('.admin-profile');
+
+    if (profileBtn) {
+        profileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Admin stays on admin page or can navigate to admin profile section
+            const adminProfileSection = document.getElementById('settings');
+            if (adminProfileSection) {
+                // Scroll to settings section
+                adminProfileSection.scrollIntoView({ behavior: 'smooth' });
+                // Activate settings nav item
+                document.querySelector('[data-section=\"settings\"]').click();
+            }
+        });
+    }
+}console.log('Admin Dashboard loaded successfully!');
