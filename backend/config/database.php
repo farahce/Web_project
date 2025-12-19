@@ -21,8 +21,8 @@ if ($conn->connect_error) {
     ]));
 }
 
-// Set charset
-$conn->set_charset("utf8");
+// Set charset to utf8mb4 to match database schema
+$conn->set_charset("utf8mb4");
 
 // Return connection object
 return $conn;

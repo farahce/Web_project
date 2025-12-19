@@ -1,8 +1,8 @@
-// Toggle Password Visibility
+// Toggle password visibility
 function togglePassword() {
     const passwordInput = document.getElementById('password');
     const toggleIcon = document.querySelector('.toggle-password i');
-
+    
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         toggleIcon.classList.remove('fa-eye');
@@ -14,88 +14,58 @@ function togglePassword() {
     }
 }
 
-// Handle Form Submission
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
+// Login form handler
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
-    // Basic validation
+    // Validate inputs
     if (!email || !password) {
-        alert('Please fill in all fields');
+        showNotification('Please enter both email and password', 'error');
         return;
     }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address');
-        return;
-    }
+    // Disable submit button to prevent double submission
+    const submitBtn = document.querySelector('.btn-login');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in...';
 
-    // Call API
-    const response = await apiCall('/api/login', 'POST', {
-        email: email,
-        password: password
-    });
+    try {
+        // Use the apiCall function from api-config.js
+        const result = await apiCall('/api/login', 'POST', { email, password });
 
-    if (response.status === 'success') {
-        // Save user data to localStorage
-        localStorage.setItem('user', JSON.stringify(response.data));
-        localStorage.setItem('user_id', response.data.user_id);
+        if (result.status === 'success' && result.data) {
+            // Store user data in localStorage
+            localStorage.setItem('user_id', result.data.user_id);
+            localStorage.setItem('user', JSON.stringify({
+                id: result.data.user_id,
+                username: result.data.username,
+                email: result.data.email
+            }));
 
-        alert('Login successful! Welcome to Dafah.');
+            // Show success notification
+            showNotification('Login successful! Welcome back, ' + result.data.username, 'success');
 
-        // Redirect to home page
-        window.location.href = 'Home_page.html';
-    } else {
-        alert('Login failed: ' + response.message);
-    }
+            // Trigger storage event for multi-tab support
+            window.dispatchEvent(new Event('storage'));
 
-    // Reset form
-    this.reset();
-});
-
-
-// Add smooth focus effects
-document.querySelectorAll('.input-wrapper input').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentElement.style.boxShadow = '0 0 0 3px rgba(212, 163, 115, 0.1)';
-    });
-
-    input.addEventListener('blur', function() {
-        this.parentElement.style.boxShadow = 'none';
-    });
-});
-
-// Social Login Buttons
-document.querySelectorAll('.social-btn').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        const provider = this.classList[1].split('-')[0];
-        console.log('Login with:', provider);
-        alert(`Redirecting to ${provider} login...`);
-    });
-});
-
-// Add animation on page load
-window.addEventListener('load', function() {
-    document.querySelector('.login-content').style.animation = 'fadeInUp 0.6s ease-out';
-});
-
-// Add fade-in animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
+            // Redirect to home page after a short delay
+            setTimeout(() => {
+                window.location.href = 'Home_page.html';
+            }, 500);
+        } else {
+            // Show error notification
+            showNotification(result.message || 'Login failed. Please check your credentials.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    } catch (error) {
+        console.error('Login error:', error);
+        showNotification('An error occurred. Please try again.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
     }
-`;
-document.head.appendChild(style);
+});

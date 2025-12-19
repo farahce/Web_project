@@ -152,3 +152,5 @@ gsap.from(".nav-login-btn", {
     ease: "back.out(1.7)"
 });
 // Removed 3D hover effect event listeners for cookies
+
+// Login button update is now handled by navigation.js

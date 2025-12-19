@@ -1,10 +1,45 @@
 <?php
 /**
- * User Registration API
- * POST /api/register
+ * User Login API
+ * POST /api/login
  */
 
-global $conn;
+// Set headers (only if not already set)
+if (!headers_sent()) {
+    header('Content-Type: application/json');
+    // Allow credentials - set specific origin instead of *
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Allow-Methods: POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+}
+
+// Handle preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    // Configure session cookie to work with credentials
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.cookie_samesite', 'None');
+    ini_set('session.cookie_secure', '0'); // Set to 1 if using HTTPS
+    session_start();
+}
+
+// Include database connection if not already included
+if (!isset($conn)) {
+    $conn = include '../config/database.php';
+}
+
+// Include functions if not already included
+if (!function_exists('sendResponse')) {
+    include '../includes/functions.php';
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'POST') {
@@ -12,13 +47,11 @@ if ($method === 'POST') {
     $data = getJsonInput();
 
     // Validate required fields
-    if (!isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
-        sendResponse('error', 'Username, email, and password are required');
+    if (!isset($data['email']) || !isset($data['password'])) {
+        sendResponse('error', 'Email and password are required');
     }
 
-    // Sanitize input
-    $username = sanitize($conn, $data['username']);
-    $email = sanitize($conn, $data['email']);
+    $email = trim($data['email']);
     $password = $data['password'];
 
     // Validate email
@@ -26,30 +59,51 @@ if ($method === 'POST') {
         sendResponse('error', 'Invalid email format');
     }
 
-    // Check if user already exists
-    $sql = "SELECT id FROM users WHERE email = '$email'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        sendResponse('error', 'Email already registered');
+    // Validate password not empty
+    if (empty($password)) {
+        sendResponse('error', 'Password is required');
     }
 
-    // Hash password
-    $hashed_password = hashPassword($password);
-
-    // Insert user
-    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$hashed_password')";
-
-    if ($conn->query($sql)) {
-        $user_id = $conn->insert_id;
-        sendResponse('success', 'Registration successful', [
-            'user_id' => $user_id,
-            'username' => $username,
-            'email' => $email
-        ]);
-    } else {
-        sendResponse('error', 'Registration failed: ' . $conn->error);
+    // Find user using prepared statement
+    $sql = "SELECT id, username, email, password, is_active FROM users WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        sendResponse('error', 'Database error: ' . $conn->error);
     }
+    
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        $stmt->close();
+        sendResponse('error', 'Invalid email or password');
+    }
+
+    $user = $result->fetch_assoc();
+    $stmt->close();
+
+    // Check if user is active
+    if (!$user['is_active']) {
+        sendResponse('error', 'Account is deactivated. Please contact support.');
+    }
+
+    // Verify password
+    if (!verifyPassword($password, $user['password'])) {
+        sendResponse('error', 'Invalid email or password');
+    }
+
+    // Set session
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    $_SESSION['email'] = $user['email'];
+
+    sendResponse('success', 'Login successful', [
+        'user_id' => $user['id'],
+        'username' => $user['username'],
+        'email' => $user['email']
+    ]);
 } else {
     sendResponse('error', 'Method not allowed');
 }

@@ -18,7 +18,8 @@ async function apiCall(endpoint, method = 'GET', data = null) {
         method: method,
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include' // Include cookies for session management
     };
 
     // Add request body if data is provided
@@ -28,6 +29,18 @@ async function apiCall(endpoint, method = 'GET', data = null) {
 
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Non-JSON response:', text);
+            return {
+                status: 'error',
+                message: 'Invalid response from server'
+            };
+        }
+        
         const result = await response.json();
         return result;
     } catch (error) {
@@ -59,10 +72,18 @@ function getCurrentUser() {
 /**
  * Logout user
  */
-function logout() {
-    localStorage.removeItem('user');
-    localStorage.removeItem('user_id');
-    window.location.href = 'login.html';
+async function logout() {
+    try {
+        // Call backend logout API
+        await apiCall('/api/logout', 'POST');
+    } catch (error) {
+        console.error('Logout error:', error);
+    } finally {
+        // Clear local storage regardless of API call result
+        localStorage.removeItem('user');
+        localStorage.removeItem('user_id');
+        window.location.href = 'login.html';
+    }
 }
 
 /**

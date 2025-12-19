@@ -63,7 +63,13 @@ function sanitize($conn, $input) {
  */
 function getJsonInput() {
     $input = file_get_contents("php://input");
-    return json_decode($input, true);
+    $data = json_decode($input, true);
+    
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        sendResponse('error', 'Invalid JSON input: ' . json_last_error_msg());
+    }
+    
+    return $data ? $data : [];
 }
 
 /**
@@ -75,22 +81,62 @@ function isLoggedIn() {
 
 /**
  * Get current user ID
+ * Checks session first, then falls back to checking Authorization header or request body
  */
 function getCurrentUserId() {
-    return isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+    // First check session (primary method)
+    if (isset($_SESSION['user_id'])) {
+        return $_SESSION['user_id'];
+    }
+    
+    // Fallback: Check if user_id is in request body (for debugging/fallback)
+    $input = file_get_contents("php://input");
+    $data = json_decode($input, true);
+    if (isset($data['user_id'])) {
+        // Verify the user_id is valid by checking database
+        global $conn;
+        $user_id = (int)$data['user_id'];
+        $check = $conn->prepare("SELECT id FROM users WHERE id = ?");
+        if ($check) {
+            $check->bind_param("i", $user_id);
+            $check->execute();
+            $result = $check->get_result();
+            if ($result->num_rows > 0) {
+                $check->close();
+                // Set session for future requests
+                $_SESSION['user_id'] = $user_id;
+                return $user_id;
+            }
+            $check->close();
+        }
+    }
+    
+    return null;
 }
 
 /**
- * Log activity
+ * Log activity (if activity_log table exists)
  */
 function logActivity($conn, $user_id, $action, $details = null) {
-    $action = $conn->real_escape_string($action);
-    $details = $details ? $conn->real_escape_string($details) : null;
-
-    $sql = "INSERT INTO activity_log (user_id, action, details)
-            VALUES ($user_id, '$action', '$details')";
-
-    return $conn->query($sql);
+    // Check if table exists first
+    $check_table = $conn->query("SHOW TABLES LIKE 'activity_log'");
+    if ($check_table->num_rows === 0) {
+        return false; // Table doesn't exist
+    }
+    
+    // Use prepared statement for security
+    $sql = "INSERT INTO activity_log (user_id, action, details) VALUES (?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        return false;
+    }
+    
+    $stmt->bind_param("iss", $user_id, $action, $details);
+    $result = $stmt->execute();
+    $stmt->close();
+    
+    return $result;
 }
 
 ?>

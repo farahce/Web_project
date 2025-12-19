@@ -22,23 +22,66 @@ let checkoutState = {
 };
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadCart();
+document.addEventListener('DOMContentLoaded', async () => {
+    // Check if user is logged in
+    if (!isLoggedIn()) {
+        showToast('Please login to continue checkout', 'error');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 2000);
+        return;
+    }
+
+    await loadCart();
     updateOrderSummary();
     setupEventListeners();
     setupCardFormatting();
+    loadUserData();
 });
 
-// Load Cart from localStorage
-function loadCart() {
-    const saved = localStorage.getItem('dafah_cart');
-    checkoutState.cart = saved ? JSON.parse(saved) : [];
+// Load Cart from backend API
+async function loadCart() {
+    try {
+        const response = await apiCall('/api/cart', 'GET');
+        
+        if (response.status === 'success' && response.data && response.data.items) {
+            // Convert backend cart items to checkout format
+            checkoutState.cart = response.data.items.map(item => ({
+                id: item.product_id,
+                name: item.name,
+                price: parseFloat(item.price),
+                quantity: item.quantity,
+                image: item.image_url || 'images/default.png'
+            }));
 
-    if (checkoutState.cart.length === 0) {
-        showToast('Your cart is empty!', 'warning');
-        setTimeout(() => {
-            window.location.href = 'cart.html';
-        }, 2000);
+            if (checkoutState.cart.length === 0) {
+                showToast('Your cart is empty!', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'cart.html';
+                }, 2000);
+            }
+        } else {
+            showToast('Failed to load cart', 'error');
+            setTimeout(() => {
+                window.location.href = 'cart.html';
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Error loading cart:', error);
+        showToast('Error loading cart. Please try again.', 'error');
+    }
+}
+
+// Load user data to pre-fill shipping form
+function loadUserData() {
+    const user = getCurrentUser();
+    if (user) {
+        // Pre-fill email if available
+        const emailInput = document.getElementById('shipping-email');
+        if (emailInput && user.email) {
+            emailInput.value = user.email;
+            checkoutState.shipping.email = user.email;
+        }
     }
 }
 
@@ -288,37 +331,72 @@ function getShippingMethodName(method) {
 }
 
 // Place Order
-function placeOrder() {
+async function placeOrder() {
     if (!validateStep(2)) {
         showToast('Please complete all required fields', 'error');
         return;
     }
 
-    // Create order
-    const order = {
-        id: generateOrderNumber(),
-        date: new Date().toISOString(),
-        shipping: checkoutState.shipping,
-        payment: checkoutState.payment,
-        items: checkoutState.cart,
-        total: calculateTotal()
-    };
-
-    // Save order
-    const orders = JSON.parse(localStorage.getItem('dafah_orders') || '[]');
-    orders.push(order);
-    localStorage.setItem('dafah_orders', JSON.stringify(orders));
-
-    // Clear cart
-    localStorage.removeItem('dafah_cart');
-
-    // 📱 SEND SMS NOTIFICATION
-    if (checkoutState.shipping.phone) {
-        smsNotifications.sendOrderConfirmationSMS(checkoutState.shipping.phone, order.id);
+    if (!isLoggedIn()) {
+        showToast('Please login to place an order', 'error');
+        window.location.href = 'login.html';
+        return;
     }
 
-    // Show success modal
-    showSuccessModal(order);
+    // Disable place order button
+    const placeOrderBtn = document.querySelector('.place-order-btn');
+    if (placeOrderBtn) {
+        placeOrderBtn.disabled = true;
+        placeOrderBtn.textContent = 'Processing...';
+    }
+
+    try {
+        // Prepare order data for backend
+        const orderData = {
+            shipping_address: checkoutState.shipping.address,
+            shipping_city: checkoutState.shipping.city,
+            shipping_country: checkoutState.shipping.country || 'USA',
+            shipping_postal_code: checkoutState.shipping.zip,
+            payment_method: checkoutState.payment.method,
+            notes: `Shipping: ${getShippingMethodName(checkoutState.shipping.method)}`
+        };
+
+        // Create order via API
+        const response = await apiCall('/api/orders', 'POST', orderData);
+
+        if (response.status === 'success' && response.data) {
+            const order = {
+                id: response.data.order_number,
+                order_id: response.data.order_id,
+                date: new Date().toISOString(),
+                shipping: checkoutState.shipping,
+                payment: checkoutState.payment,
+                items: checkoutState.cart,
+                total: parseFloat(response.data.final_amount)
+            };
+
+            // 📱 SEND SMS NOTIFICATION (if available)
+            if (checkoutState.shipping.phone && typeof smsNotifications !== 'undefined') {
+                smsNotifications.sendOrderConfirmationSMS(checkoutState.shipping.phone, order.id);
+            }
+
+            // Show success modal
+            showSuccessModal(order);
+        } else {
+            showToast(response.message || 'Failed to place order. Please try again.', 'error');
+            if (placeOrderBtn) {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order';
+            }
+        }
+    } catch (error) {
+        console.error('Error placing order:', error);
+        showToast('An error occurred. Please try again.', 'error');
+        if (placeOrderBtn) {
+            placeOrderBtn.disabled = false;
+            placeOrderBtn.textContent = 'Place Order';
+        }
+    }
 }
 
 // Generate Order Number

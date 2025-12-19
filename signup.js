@@ -274,21 +274,40 @@ function showStep(step) {
 }
 
 // Submit Form
-function submitForm() {
-    if (validateStep(3)) {
-        // Save user data to localStorage
-        const userData = {
-            ...formState,
-            createdAt: new Date().toISOString()
-        };
+async function submitForm() {
+    if (!validateStep(3)) return;
 
-        localStorage.setItem('dafah_user', JSON.stringify(userData));
+    const payload = {
+        username: formState.firstName + ' ' + formState.lastName,
+        email: formState.email,
+        password: formState.password,
+        phone: formState.phone,
+        address: formState.address,
+        city: formState.city,
+        country: 'Palestine',
+        postal_code: formState.zip
+    };
 
-        // Show success message
-        showSuccessStep();
-        showToast('Account created successfully!', 'success');
+    try {
+        const response = await fetch('backend/public/index.php/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            showSuccessStep();
+            showToast('Account created successfully!', 'success');
+        } else {
+            showToast(result.message, 'error');
+        }
+    } catch (err) {
+        showToast('Server error. Please try again.', 'error');
     }
 }
+
 
 // Show Success Step
 function showSuccessStep() {
@@ -325,41 +344,3 @@ document.addEventListener('keypress', (e) => {
     }
 });
 // After successful signup
-emailMarketing.sendWelcomeEmail(formState.email);
-emailMarketing.subscribe(formState.email);
-// Handle Signup Form Submission
-document.getElementById('signupForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-
-    // Validation
-    if (!username || !email || !password || !confirmPassword) {
-        alert('Please fill in all fields');
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-    }
-
-    // Call API
-    const response = await apiCall('/api/register', 'POST', {
-        username: username,
-        email: email,
-        password: password
-    });
-
-    if (response.status === 'success') {
-        alert('Registration successful! Please login.');
-        window.location.href = 'login.html';
-    } else {
-        alert('Registration failed: ' + response.message);
-    }
-
-    this.reset();
-});
