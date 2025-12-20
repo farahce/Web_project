@@ -1,0 +1,12 @@
+# Database config
+backend/config/database.php
+backend/config/secrets.php
+
+# Debug logs
+*.log
+debug_messages.txt
+api_debug.log
+
+# IDE files
+.idea/
+.vscode/

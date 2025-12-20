@@ -176,7 +176,10 @@ function logActivity($conn, $user_id, $action, $details = null) {
  * Send real email via Brevo API
  */
 function sendRealEmail($to, $subject, $content, $toName = "") {
-    $apiKey = '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';
+    if (!defined('BREVO_API_KEY')) {
+        require_once dirname(__DIR__) . '/config/secrets.php';
+    }
+    $apiKey = BREVO_API_KEY;
     
     $url = 'https://api.brevo.com/v3/smtp/email';
     
