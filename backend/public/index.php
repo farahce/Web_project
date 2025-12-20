@@ -23,15 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Start session with proper cookie settings for cross-origin requests
-if (session_status() === PHP_SESSION_NONE) {
-    // Configure session cookie to work with credentials
-    ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'Lax'); // Lax is better for localhost/same-origin
-    ini_set('session.cookie_secure', '0'); // Set to 1 if using HTTPS
-    session_start();
-}
-
 // Include database connection
 $conn = include '../config/database.php';
 

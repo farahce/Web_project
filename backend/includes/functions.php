@@ -1,8 +1,22 @@
 <?php
 /**
- * Common Functions
- * Reusable functions for all API endpoints
+ * Global Session Initialization
+ * Ensures session is started consistently across all entry points
  */
+function startSession() {
+    if (session_status() === PHP_SESSION_NONE) {
+        // Enforce secure/consistent session settings
+        ini_set('session.cookie_httponly', '1');
+        ini_set('session.cookie_samesite', 'Lax');
+        ini_set('session.cookie_path', '/'); // Crucial: shared across all directories
+        ini_set('session.cookie_secure', '0'); // Set to 1 for HTTPS
+        session_start();
+    }
+}
+
+// Auto-start session when functions are included
+startSession();
+
 
 /**
  * Send JSON response

@@ -37,3 +37,7 @@
 [2025-12-20 17:23:44] Request: POST /Webproj/backend/public/index.php/api/notifications
 [2025-12-20 17:23:48] Request: GET /Webproj/backend/public/index.php/api/notifications
 [2025-12-20 17:32:42] Request: GET /Webproj/backend/public/index.php/api/notifications
+[2025-12-20 18:04:30] Request: GET /Webproj/backend/public/index.php/api/dashboard
+[2025-12-20 19:00:43] Request: POST /Webproj/backend/public/index.php/api/logout
+[2025-12-20 19:00:45] Request: POST /Webproj/backend/public/index.php/api/login
+[2025-12-20 19:00:51] Request: GET /Webproj/backend/public/index.php/api/dashboard

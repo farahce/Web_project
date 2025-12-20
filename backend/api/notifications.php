@@ -22,12 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Include dependencies
-if (session_status() === PHP_SESSION_NONE) {
-    ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'None'); 
-    ini_set('session.cookie_secure', '0');
-    session_start();
-}
+// (Session is now handled by functions.php)
 
 if (!isset($conn)) {
     $conn = include '../config/database.php';

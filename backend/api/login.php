@@ -22,13 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    // Configure session cookie to work with credentials
-    ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'Lax');
-    ini_set('session.cookie_secure', '0'); // Set to 1 if using HTTPS
-    session_start();
-}
+// (Session is now handled by functions.php)
 
 // Include database connection if not already included
 if (!isset($conn)) {
