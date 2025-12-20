@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 if (session_status() === PHP_SESSION_NONE) {
     // Configure session cookie to work with credentials
     ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'None');
+    ini_set('session.cookie_samesite', 'Lax'); // Lax is better for localhost/same-origin
     ini_set('session.cookie_secure', '0'); // Set to 1 if using HTTPS
     session_start();
 }
@@ -42,6 +42,9 @@ include '../includes/functions.php';
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $request_method = $_SERVER['REQUEST_METHOD'];
 
+// DEBUG LOG
+file_put_contents(__DIR__ . '/../../api_debug.log', date('[Y-m-d H:i:s] ') . "Request: $request_method $request_uri\n", FILE_APPEND);
+
 // Simple routing
 if (strpos($request_uri, '/api/register') !== false) {
     include '../api/register.php';
@@ -50,21 +53,27 @@ if (strpos($request_uri, '/api/register') !== false) {
 } elseif (strpos($request_uri, '/api/logout') !== false) {
     include '../api/logout.php';
 } elseif (strpos($request_uri, '/api/admin/products') !== false) {
-    include '../api/admin/products.php';
+    include '../admin/products.php';
 } elseif (strpos($request_uri, '/api/admin/orders') !== false) {
-    include '../api/admin/orders.php';
+    include '../admin/orders.php';
 } elseif (strpos($request_uri, '/api/admin/customers') !== false) {
-    include '../api/admin/customers.php';
+    include '../admin/customers.php';
 } elseif (strpos($request_uri, '/api/admin/dashboard') !== false) {
-    include '../api/admin/dashboard.php';
+    include '../admin/dashboard.php';
 } elseif (strpos($request_uri, '/api/admin/analytics') !== false) {
-    include '../api/admin/analytics.php';
+    include '../admin/analytics.php';
 } elseif (strpos($request_uri, '/api/products') !== false) {
     include '../api/products.php';
 } elseif (strpos($request_uri, '/api/cart') !== false) {
     include '../api/cart.php';
 } elseif (strpos($request_uri, '/api/orders') !== false) {
     include '../api/orders.php';
+} elseif (strpos($request_uri, '/api/notifications') !== false) {
+    include '../api/notifications.php';
+} elseif (strpos($request_uri, '/api/dashboard') !== false) {
+    include '../api/dashboard.php';
+} elseif (strpos($request_uri, '/api/messages') !== false) {
+    include '../api/messages.php';
 } else {
     sendResponse('success', 'Dafah API is running!', [
         'version' => '1.0.0',

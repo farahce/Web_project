@@ -69,7 +69,7 @@ function requireAdmin() {
         return;
     }
 
-    if (!isAdmin()) {
+    if (!isAdmin()) {  // ← Checks if user_role === 'admin'
         showNotification('Access denied. Admin privileges required.', 'error');
         window.location.href = 'Home_page.html';
     }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,207 +9,213 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-            href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap"
-            rel="stylesheet"
-    />
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap"
+        rel="stylesheet" />
     <!-- css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="Home_page.css" />
     <link rel="stylesheet" href="contact.css" />
 </head>
+
 <body>
-<header class="w-full">
-    <nav class="nav">
-        <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
-        <ul class="nav-links">
-            <li><a href="Home_page.html">Home</a></li>
-            <li><a href="menu.html">Menu</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
-            <li><a href="Location.html">Our Location</a></li>
-        </ul>
-    </nav>
-</header>
+    <header class="w-full">
+        <nav class="nav">
+            <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
+            <ul class="nav-links">
+                <li><a href="Home_page.html">Home</a></li>
+                <li><a href="menu.html">Menu</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+                <li><a href="Location.html">Our Location</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<div class="contact-container">
-    <!-- Hero Section -->
-    <section class="contact-hero">
-        <div class="hero-content">
-            <h1 class="heading">Get In Touch</h1>
-            <p class="hero-subtitle">We'd love to hear from you. Send us a message!</p>
-        </div>
-    </section>
+    <div class="contact-container">
+        <!-- Hero Section -->
+        <section class="contact-hero">
+            <div class="hero-content">
+                <h1 class="heading">Get In Touch</h1>
+                <p class="hero-subtitle">We'd love to hear from you. Send us a message!</p>
+            </div>
+        </section>
 
-    <!-- Contact Content -->
-    <section class="contact-content">
-        <div class="contact-wrapper">
-            <!-- Contact Form -->
-            <div class="contact-form-section">
-                <h2 class="form-title">Send us a Message</h2>
-                <form class="contact-form" id="contactForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" name="name" placeholder="Your name" required>
+        <!-- Contact Content -->
+        <section class="contact-content">
+            <div class="contact-wrapper">
+                <!-- Contact Form -->
+                <div class="contact-form-section">
+                    <h2 class="form-title">Send us a Message</h2>
+                    <form class="contact-form" id="contactForm" novalidate>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" placeholder="Your name">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" placeholder="your@email.com">
+                            </div>
                         </div>
+
                         <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <select id="subject" name="subject">
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="partnership">Partnership</option>
+                                <option value="catering">Catering Request</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" placeholder="Tell us what's on your mind..."
+                                rows="6"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit radius">Send Message</button>
+                    </form>
+                    <div class="form-message" id="formMessage"></div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info-section">
+                    <h2 class="info-title">Contact Information</h2>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Visit Us</h3>
+                            <p>University Street, near An-Najah New Campus<br>Nablus, Palestine
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Call Us</h3>
+                            <p><a href="tel:+15551234567">+1 (555) 123-4567</a><br>Mon-Fri: 9AM - 6PM</p>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="subject">Subject</label>
-                        <select id="subject" name="subject" required>
-                            <option value="">Select a subject</option>
-                            <option value="general">General Inquiry</option>
-                            <option value="feedback">Feedback</option>
-                            <option value="partnership">Partnership</option>
-                            <option value="catering">Catering Request</option>
-                            <option value="other">Other</option>
-                        </select>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Email Us</h3>
+                            <p><a href="mailto:hello@dafah.com">hello@dafah.com</a><br>We reply within 24 hours</p>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="message">Message</label>
-                        <textarea id="message" name="message" placeholder="Tell us what's on your mind..." rows="6" required></textarea>
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="info-content">
+                            <h3>Hours</h3>
+                            <p>Monday - Friday: 8AM - 8PM<br>Saturday - Sunday: 9AM - 9PM</p>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn-submit radius">Send Message</button>
-                </form>
-                <div class="form-message" id="formMessage"></div>
-            </div>
-
-            <!-- Contact Info -->
-            <div class="contact-info-section">
-                <h2 class="info-title">Contact Information</h2>
-                
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="info-content">
-                        <h3>Visit Us</h3>
-                        <p>University Street, near An-Najah New Campus<br>Nablus, Palestine
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-                    <div class="info-content">
-                        <h3>Call Us</h3>
-                        <p><a href="tel:+15551234567">+1 (555) 123-4567</a><br>Mon-Fri: 9AM - 6PM</p>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="info-content">
-                        <h3>Email Us</h3>
-                        <p><a href="mailto:hello@dafah.com">hello@dafah.com</a><br>We reply within 24 hours</p>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="info-content">
-                        <h3>Hours</h3>
-                        <p>Monday - Friday: 8AM - 8PM<br>Saturday - Sunday: 9AM - 9PM</p>
-                    </div>
-                </div>
-
-                <!-- Social Links -->
-                <div class="social-section">
-                    <h3>Follow Us</h3>
-                    <div class="social-links">
-                        <a href="#" class="social-link facebook" title="Facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-link instagram" title="Instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="social-link twitter" title="Twitter">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link linkedin" title="LinkedIn">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
+                    <!-- Social Links -->
+                    <div class="social-section">
+                        <h3>Follow Us</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link facebook" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-link instagram" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link twitter" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link linkedin" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- FAQ Section -->
-    <section class="faq-section">
-        <h2 class="section-heading">Frequently Asked Questions</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Do you offer catering services?</h3>
-                    <i class="fas fa-chevron-down"></i>
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <h2 class="section-heading">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do you offer catering services?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We offer catering services for events of all sizes. Please contact us for custom quotes
+                            and menu options.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Yes! We offer catering services for events of all sizes. Please contact us for custom quotes and menu options.</p>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I place custom orders?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We love custom orders. Contact us at least 48 hours in advance for special
+                            requests.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do you have dietary options?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we offer vegan, gluten-free, and sugar-free options. Please ask our staff for available
+                            selections.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What are your delivery options?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer free delivery for orders over $25 within our service area. Standard delivery takes
+                            30-45 minutes.</p>
+                    </div>
                 </div>
             </div>
+        </section>
+    </div>
 
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Can I place custom orders?</h3>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>Absolutely! We love custom orders. Contact us at least 48 hours in advance for special requests.</p>
-                </div>
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-content">
+            <p class="footer-text">© 2024 Dafah - All rights reserved</p>
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Do you have dietary options?</h3>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>Yes, we offer vegan, gluten-free, and sugar-free options. Please ask our staff for available selections.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>What are your delivery options?</h3>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>We offer free delivery for orders over $25 within our service area. Standard delivery takes 30-45 minutes.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<!-- Footer -->
-<div class="footer">
-    <div class="footer-content">
-        <p class="footer-text">© 2024 Dafah - All rights reserved</p>
-        <div class="social-icons">
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
         </div>
     </div>
-</div>
-<script src="api-config.js"></script>
-<script src="contact.js"></script>
+    <script src="api-config.js?v=30"></script>
+    <script src="contact.js?v=30"></script>
 </body>
+
 </html>

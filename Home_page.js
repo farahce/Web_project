@@ -154,3 +154,21 @@ gsap.from(".nav-login-btn", {
 // Removed 3D hover effect event listeners for cookies
 
 // Login button update is now handled by navigation.js
+
+// Newsletter Subscription Handler
+function handleNewsletterSubmit(event) {
+    event.preventDefault();
+    const emailInput = document.getElementById('footer-newsletter-email');
+    const email = emailInput.value.trim();
+
+    if (email && typeof subscribeToNewsletter === 'function') {
+        const result = subscribeToNewsletter(email);
+        alert(result.message); // Simple feedback for now
+        if (result.success) {
+            emailInput.value = '';
+        }
+    } else {
+        console.error('Email marketing system not loaded');
+        alert('Service temporarily unavailable. Please try again later.');
+    }
+}

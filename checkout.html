@@ -1,284 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout - Dafah</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="checkout.css" />
 </head>
+
 <body>
-<header class="w-full">
-    <nav class="nav">
-        <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
-        <ul class="nav-links">
-            <li><a href="Home_page.html">Home</a></li>
-            <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Back to Cart</a></li>
-        </ul>
-    </nav>
-</header>
+    <header class="w-full">
+        <nav class="nav">
+            <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
+            <ul class="nav-links">
+                <li><a href="Home_page.html">Home</a></li>
+                <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Back to Cart</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<div class="checkout-container">
-    <div class="checkout-header">
-        <h1>Complete Your Order</h1>
-        <p>Secure checkout with Dafah</p>
-    </div>
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1>Complete Your Order</h1>
+            <p>Secure checkout with Dafah</p>
+        </div>
 
-    <div class="checkout-content">
-        <!-- Left Side - Forms -->
-        <div class="checkout-forms">
-            <!-- Progress Steps -->
-            <div class="progress-steps">
-                <div class="step active" id="step-1-indicator">
-                    <div class="step-circle">1</div>
-                    <span>Shipping</span>
+        <div class="checkout-content">
+            <!-- Left Side - Forms -->
+            <div class="checkout-forms">
+                <!-- Progress Steps -->
+                <div class="progress-steps">
+                    <div class="step active" id="step-1-indicator">
+                        <div class="step-circle">1</div>
+                        <span>Shipping</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step-2-indicator">
+                        <div class="step-circle">2</div>
+                        <span>Payment</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step-3-indicator">
+                        <div class="step-circle">3</div>
+                        <span>Review</span>
+                    </div>
                 </div>
-                <div class="step-line"></div>
-                <div class="step" id="step-2-indicator">
-                    <div class="step-circle">2</div>
-                    <span>Payment</span>
-                </div>
-                <div class="step-line"></div>
-                <div class="step" id="step-3-indicator">
-                    <div class="step-circle">3</div>
-                    <span>Review</span>
-                </div>
-            </div>
 
-            <!-- Step 1: Shipping -->
-            <div class="checkout-step active" id="checkout-step-1">
-                <h2><i class="fas fa-truck"></i> Shipping Information</h2>
+                <!-- Step 1: Shipping -->
+                <div class="checkout-step active" id="checkout-step-1">
+                    <h2><i class="fas fa-truck"></i> Shipping Information</h2>
 
-                <form id="shipping-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ship-first-name">First Name</label>
-                            <input type="text" id="ship-first-name" name="firstName" required />
-                        </div>
-                        <div class="form-group">
-                            <label for="ship-last-name">Last Name</label>
-                            <input type="text" id="ship-last-name" name="lastName" required />
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="ship-email">Email</label>
-                        <input type="email" id="ship-email" name="email" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="ship-phone">Phone Number</label>
-                        <input type="tel" id="ship-phone" name="phone" required />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="ship-address">Street Address</label>
-                        <input type="text" id="ship-address" name="address" required />
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="ship-city">City</label>
-                            <input type="text" id="ship-city" name="city" required />
-                        </div>
-                        <div class="form-group">
-                            <label for="ship-zip">ZIP Code</label>
-                            <input type="text" id="ship-zip" name="zip" required />
-                        </div>
-                    </div>
-
-                    <div class="shipping-options">
-                        <h3>Delivery Method</h3>
-                        <label class="shipping-option">
-                            <input type="radio" name="shipping" value="standard" checked />
-                            <span class="option-content">
-                                <span class="option-title">Standard Delivery</span>
-                                <span class="option-price">$5.00 - 3-5 business days</span>
-                            </span>
-                        </label>
-                        <label class="shipping-option">
-                            <input type="radio" name="shipping" value="express" />
-                            <span class="option-content">
-                                <span class="option-title">Express Delivery</span>
-                                <span class="option-price">$15.00 - 1-2 business days</span>
-                            </span>
-                        </label>
-                        <label class="shipping-option">
-                            <input type="radio" name="shipping" value="overnight" />
-                            <span class="option-content">
-                                <span class="option-title">Overnight Delivery</span>
-                                <span class="option-price">$25.00 - Next day</span>
-                            </span>
-                        </label>
-                    </div>
-
-                    <button type="button" class="btn-next" onclick="goToStep(2)">
-                        Continue to Payment <i class="fas fa-arrow-right"></i>
-                    </button>
-                </form>
-            </div>
-
-            <!-- Step 2: Payment -->
-            <div class="checkout-step" id="checkout-step-2">
-                <h2><i class="fas fa-credit-card"></i> Payment Information</h2>
-
-                <form id="payment-form">
-                    <div class="payment-methods">
-                        <label class="payment-method active">
-                            <input type="radio" name="payment-method" value="card" checked />
-                            <span><i class="fas fa-credit-card"></i> Credit/Debit Card</span>
-                        </label>
-                        <label class="payment-method">
-                            <input type="radio" name="payment-method" value="paypal" />
-                            <span><i class="fab fa-paypal"></i> PayPal</span>
-                        </label>
-                        <label class="payment-method">
-                            <input type="radio" name="payment-method" value="apple" />
-                            <span><i class="fab fa-apple"></i> Apple Pay</span>
-                        </label>
-                    </div>
-
-                    <div id="card-payment" class="payment-details">
-                        <div class="form-group">
-                            <label for="card-name">Cardholder Name</label>
-                            <input type="text" id="card-name" placeholder="John Doe" required />
+                    <form id="shipping-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ship-first-name">First Name</label>
+                                <input type="text" id="ship-first-name" name="firstName" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="ship-last-name">Last Name</label>
+                                <input type="text" id="ship-last-name" name="lastName" required />
+                            </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="card-number">Card Number</label>
-                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                            <label for="ship-email">Email</label>
+                            <input type="email" id="ship-email" name="email" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ship-phone">Phone Number</label>
+                            <input type="tel" id="ship-phone" name="phone" required />
+                        </div>
+
+                        <div class="form-group checkbox-group"
+                            style="margin-top: 10px; display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="sms-opt-in" name="smsOptIn" checked
+                                style="width: auto; margin: 0;">
+                            <label for="sms-opt-in" style="margin: 0; font-size: 0.9em; cursor: pointer;">Receive order
+                                updates via SMS</label>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="ship-address">Street Address</label>
+                            <input type="text" id="ship-address" name="address" required />
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="card-expiry">Expiry Date</label>
-                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required />
+                                <label for="ship-city">City</label>
+                                <input type="text" id="ship-city" name="city" required />
                             </div>
                             <div class="form-group">
-                                <label for="card-cvv">CVV</label>
-                                <input type="text" id="card-cvv" placeholder="123" maxlength="3" required />
+                                <label for="ship-zip">ZIP Code</label>
+                                <input type="text" id="ship-zip" name="zip" required />
                             </div>
                         </div>
+
+                        <div class="shipping-options">
+                            <h3>Delivery Method</h3>
+                            <label class="shipping-option">
+                                <input type="radio" name="shipping" value="standard" checked />
+                                <span class="option-content">
+                                    <span class="option-title">Standard Delivery</span>
+                                    <span class="option-price">$5.00 - 3-5 business days</span>
+                                </span>
+                            </label>
+                            <label class="shipping-option">
+                                <input type="radio" name="shipping" value="express" />
+                                <span class="option-content">
+                                    <span class="option-title">Express Delivery</span>
+                                    <span class="option-price">$15.00 - 1-2 business days</span>
+                                </span>
+                            </label>
+                            <label class="shipping-option">
+                                <input type="radio" name="shipping" value="overnight" />
+                                <span class="option-content">
+                                    <span class="option-title">Overnight Delivery</span>
+                                    <span class="option-price">$25.00 - Next day</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <button type="button" class="btn-next" onclick="goToStep(2)">
+                            Continue to Payment <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div class="checkout-step" id="checkout-step-2">
+                    <h2><i class="fas fa-credit-card"></i> Payment Information</h2>
+
+                    <form id="payment-form">
+                        <div class="payment-methods">
+                            <label class="payment-method active">
+                                <input type="radio" name="payment-method" value="card" checked />
+                                <span><i class="fas fa-credit-card"></i> Credit/Debit Card</span>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment-method" value="paypal" />
+                                <span><i class="fab fa-paypal"></i> PayPal</span>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment-method" value="apple" />
+                                <span><i class="fab fa-apple"></i> Apple Pay</span>
+                            </label>
+                        </div>
+
+                        <div id="card-payment" class="payment-details">
+                            <div class="form-group">
+                                <label for="card-name">Cardholder Name</label>
+                                <input type="text" id="card-name" name="card-name" placeholder="John Doe" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="card-number">Card Number</label>
+                                <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9012 3456"
+                                    maxlength="19" required />
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="card-expiry">Expiry Date</label>
+                                    <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/YY"
+                                        maxlength="5" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-cvv">CVV</label>
+                                    <input type="text" id="card-cvv" name="card-cvv" placeholder="123" maxlength="3"
+                                        required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="save-card" />
+                            <label for="save-card">Save this card for future purchases</label>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn-back" onclick="goToStep(1)">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </button>
+                            <button type="button" class="btn-next" onclick="goToStep(3)">
+                                Review Order <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Review -->
+                <div class="checkout-step" id="checkout-step-3">
+                    <h2><i class="fas fa-check-circle"></i> Review Your Order</h2>
+
+                    <div class="review-section">
+                        <h3>Shipping Address</h3>
+                        <div id="review-shipping" class="review-content"></div>
+                        <button type="button" class="btn-edit" onclick="goToStep(1)">Edit</button>
                     </div>
 
-                    <div class="form-group checkbox">
-                        <input type="checkbox" id="save-card" />
-                        <label for="save-card">Save this card for future purchases</label>
+                    <div class="review-section">
+                        <h3>Payment Method</h3>
+                        <div id="review-payment" class="review-content"></div>
+                        <button type="button" class="btn-edit" onclick="goToStep(2)">Edit</button>
+                    </div>
+
+                    <div class="review-section">
+                        <h3>Order Items</h3>
+                        <div id="review-items" class="review-content"></div>
                     </div>
 
                     <div class="button-group">
-                        <button type="button" class="btn-back" onclick="goToStep(1)">
+                        <button type="button" class="btn-back" onclick="goToStep(2)">
                             <i class="fas fa-arrow-left"></i> Back
                         </button>
-                        <button type="button" class="btn-next" onclick="goToStep(3)">
-                            Review Order <i class="fas fa-arrow-right"></i>
+                        <button type="button" class="btn-place-order" onclick="placeOrder()">
+                            <i class="fas fa-check"></i> Place Order
                         </button>
                     </div>
-                </form>
-            </div>
-
-            <!-- Step 3: Review -->
-            <div class="checkout-step" id="checkout-step-3">
-                <h2><i class="fas fa-check-circle"></i> Review Your Order</h2>
-
-                <div class="review-section">
-                    <h3>Shipping Address</h3>
-                    <div id="review-shipping" class="review-content"></div>
-                    <button type="button" class="btn-edit" onclick="goToStep(1)">Edit</button>
-                </div>
-
-                <div class="review-section">
-                    <h3>Payment Method</h3>
-                    <div id="review-payment" class="review-content"></div>
-                    <button type="button" class="btn-edit" onclick="goToStep(2)">Edit</button>
-                </div>
-
-                <div class="review-section">
-                    <h3>Order Items</h3>
-                    <div id="review-items" class="review-content"></div>
-                </div>
-
-                <div class="button-group">
-                    <button type="button" class="btn-back" onclick="goToStep(2)">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </button>
-                    <button type="button" class="btn-place-order" onclick="placeOrder()">
-                        <i class="fas fa-check"></i> Place Order
-                    </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Right Side - Order Summary -->
-        <div class="order-summary-sticky">
-            <div class="order-summary">
-                <h2>Order Summary</h2>
+            <!-- Right Side - Order Summary -->
+            <div class="order-summary-sticky">
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
 
-                <div id="summary-items" class="summary-items"></div>
+                    <div id="summary-items" class="summary-items"></div>
 
-                <div class="summary-divider"></div>
+                    <div class="summary-divider"></div>
 
-                <div class="summary-row">
-                    <span>Subtotal:</span>
-                    <span id="summary-subtotal">$0.00</span>
-                </div>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="summary-subtotal">$0.00</span>
+                    </div>
 
-                <div class="summary-row">
-                    <span>Shipping:</span>
-                    <span id="summary-shipping">$5.00</span>
-                </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span id="summary-shipping">$5.00</span>
+                    </div>
 
-                <div class="summary-row">
-                    <span>Tax (10%):</span>
-                    <span id="summary-tax">$0.00</span>
-                </div>
+                    <div class="summary-row">
+                        <span>Tax (10%):</span>
+                        <span id="summary-tax">$0.00</span>
+                    </div>
 
-                <div class="summary-divider"></div>
+                    <div class="summary-divider"></div>
 
-                <div class="summary-total">
-                    <span>Total:</span>
-                    <span id="summary-total">$0.00</span>
-                </div>
+                    <div class="summary-total">
+                        <span>Total:</span>
+                        <span id="summary-total">$0.00</span>
+                    </div>
 
-                <div class="security-badge">
-                    <i class="fas fa-lock"></i>
-                    <span>Secure checkout powered by Stripe</span>
+                    <div class="security-badge">
+                        <i class="fas fa-lock"></i>
+                        <span>Secure checkout powered by Stripe</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Success Modal -->
-<div id="success-modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <h2>Order Placed Successfully!</h2>
-        <p>Thank you for your order. Your delicious treats are on the way!</p>
-        <p class="order-number">Order #<span id="order-number"></span></p>
-        <p class="order-email">A confirmation email has been sent to <span id="order-email"></span></p>
-        <div class="modal-buttons">
-            <a href="Home_page.html" class="btn-modal">
-                <i class="fas fa-home"></i> Back to Home
-            </a>
-            <a href="cart.html" class="btn-modal secondary">
-                <i class="fas fa-shopping-cart"></i> Continue Shopping
-            </a>
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p>Thank you for your order. Your delicious treats are on the way!</p>
+            <p class="order-number">Order #<span id="order-number"></span></p>
+            <p class="order-email">A confirmation email has been sent to <span id="order-email"></span></p>
+            <div class="modal-buttons">
+                <a href="Home_page.html" class="btn-modal">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <a href="cart.html" class="btn-modal secondary">
+                    <i class="fas fa-shopping-cart"></i> Continue Shopping
+                </a>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast"></div>
-<script src="api-config.js"></script>
-<script src="navigation.js"></script>
-<script src="jquery.js"></script>
-<script src="smsnotifications.js"></script>
-<script src="checkout.js"></script>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    <script src="api-config.js"></script>
+    <script src="navigation.js"></script>
+    <script src="jquery.js"></script>
+    <script src="smsnotifications.js"></script>
+    <script src="emailmarketing.js"></script>
+    <script src="checkout.js"></script>
 </body>
+
 </html>

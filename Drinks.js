@@ -54,7 +54,7 @@ const extraNames = {
 };
 
 // Initialize event listeners
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     setupBaseButtons();
     setupMilkButtons();
     setupFlavorButtons();
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Base Selection
 function setupBaseButtons() {
     document.querySelectorAll('[data-base]').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('[data-base]').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             drinkState.base = this.dataset.base;
@@ -80,7 +80,7 @@ function setupBaseButtons() {
 // Milk Selection
 function setupMilkButtons() {
     document.querySelectorAll('[data-milk]').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('[data-milk]').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             drinkState.milk = this.dataset.milk;
@@ -94,7 +94,7 @@ function setupMilkButtons() {
 // Flavor Selection
 function setupFlavorButtons() {
     document.querySelectorAll('[data-flavor]').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('[data-flavor]').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             drinkState.flavor = this.dataset.flavor;
@@ -108,7 +108,7 @@ function setupFlavorButtons() {
 // Temperature Selection
 function setupTempButtons() {
     document.querySelectorAll('[data-temp]').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('[data-temp]').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             drinkState.temp = this.dataset.temp;
@@ -120,7 +120,7 @@ function setupTempButtons() {
 // Extras (Checkboxes)
 function setupExtraCheckboxes() {
     document.querySelectorAll('.extra-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
+        checkbox.addEventListener('change', function () {
             if (this.checked) {
                 drinkState.extras.push(this.dataset.extra);
                 drinkState.prices.extras += parseFloat(this.dataset.price);
@@ -140,7 +140,7 @@ function updateCup() {
     const layerBase = document.getElementById('layerBase');
     const layerMilk = document.getElementById('layerMilk');
     const layerFlavor = document.getElementById('layerFlavor');
-    
+
     const baseDetail = document.getElementById('baseDetail');
     const milkDetail = document.getElementById('milkDetail');
     const flavorDetail = document.getElementById('flavorDetail');
@@ -196,16 +196,16 @@ function updateCup() {
     // Update details text
     baseDetail.textContent = drinkState.base.charAt(0).toUpperCase() + drinkState.base.slice(1);
     milkDetail.textContent = drinkState.milk.charAt(0).toUpperCase() + drinkState.milk.slice(1) + ' Milk';
-    
+
     if (drinkState.flavor !== 'none') {
         flavorDetail.textContent = flavorNames[drinkState.flavor];
         flavorDetail.style.display = 'block';
     } else {
         flavorDetail.style.display = 'none';
     }
-    
+
     tempDetail.textContent = drinkState.temp === 'hot' ? 'Hot ☕' : 'Iced 🧊';
-    
+
     if (drinkState.extras.length > 0) {
         const extrasList = drinkState.extras.map(e => extraNames[e]).join(', ');
         extrasDetail.textContent = '+ ' + extrasList;
@@ -229,10 +229,10 @@ function animateCupUpdate() {
 
 // Update Price
 function updatePrice() {
-    const total = drinkState.prices.base + 
-                  drinkState.prices.milk + 
-                  drinkState.prices.flavor + 
-                  drinkState.prices.extras;
+    const total = drinkState.prices.base +
+        drinkState.prices.milk +
+        drinkState.prices.flavor +
+        drinkState.prices.extras;
     document.getElementById('totalPrice').textContent = '$' + total.toFixed(2);
 }
 
@@ -247,12 +247,87 @@ function adjustBrightness(color, percent) {
 }
 
 // Preset Cards
+// Map presets to Database Products (closest match)
+const presetToProduct = {
+    'iced-latte': 'Iced Coffee',
+    'caramel-macchiato': 'Vanilla Latte',
+    'mocha': 'Hot Chocolate', // Fallback
+    'cappuccino': 'Cappuccino',
+    'americano': 'Espresso Shot',
+    'hot-chocolate': 'Hot Chocolate'
+};
+
 function setupPresetCards() {
     document.querySelectorAll('.preset-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', async function (e) {
             e.preventDefault();
-            const preset = this.closest('.preset-card').dataset.preset;
-            applyPreset(preset);
+
+            // Check login first
+            if (!isLoggedIn()) {
+                alert('Please login to add items');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const card = this.closest('.preset-card');
+            const preset = card.dataset.preset;
+
+            // Visual feedback
+            const originalText = this.textContent;
+            this.textContent = 'Adding...';
+            this.disabled = true;
+
+            try {
+                // 1. Get Product ID
+                const response = await apiCall('/api/products?category=drinks', 'GET');
+                let productId = null;
+
+                if (response.status === 'success' && response.data.products) {
+                    const targetName = presetToProduct[preset];
+                    if (targetName) {
+                        const match = response.data.products.find(p => p.name.includes(targetName));
+                        if (match) productId = match.id;
+                    }
+                }
+
+                if (!productId) {
+                    alert('Product currently unavailable');
+                    this.textContent = originalText;
+                    this.disabled = false;
+                    return;
+                }
+
+                // 2. Add to Cart
+                const userId = localStorage.getItem('user_id');
+                const cartData = { product_id: productId, quantity: 1 };
+                if (userId) cartData.user_id = parseInt(userId);
+
+                const cartRes = await apiCall('/api/cart', 'POST', cartData);
+
+                if (cartRes.status === 'success') {
+                    this.textContent = '✓ Added!';
+                    this.style.background = '#4CAF50';
+
+                    // Also update the visual builder
+                    applyPreset(preset);
+
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.style.background = '';
+                        this.disabled = false;
+                    }, 2000);
+                } else {
+                    alert(cartRes.message || 'Failed to add');
+                    this.textContent = originalText;
+                    this.disabled = false;
+                }
+
+            } catch (err) {
+                console.error('Quick Add Error:', err);
+                alert('Connection error');
+                this.textContent = originalText;
+                this.disabled = false;
+            }
         });
     });
 }
@@ -344,26 +419,97 @@ function applyPreset(preset) {
 }
 
 // Add to Basket
-function setupAddToBasketButton() {
-    document.querySelector('.add-to-basket-btn').addEventListener('click', function() {
-        const drinkName = drinkState.base.charAt(0).toUpperCase() + drinkState.base.slice(1) + 
-                         (drinkState.flavor !== 'none' ? ' ' + flavorNames[drinkState.flavor] : '');
-        const total = (drinkState.prices.base + 
-                      drinkState.prices.milk + 
-                      drinkState.prices.flavor + 
-                      drinkState.prices.extras).toFixed(2);
-        
-        // Show success animation
-        const btn = this;
-        const originalText = btn.textContent;
-        btn.textContent = '✓ Added to Basket!';
-        btn.style.background = '#4CAF50';
-        
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.background = '';
-        }, 2000);
+// Product Mapping for Drinks
+const drinkBaseToProductMap = {
+    'espresso': 'Espresso',
+    'americano': 'Americano',
+    'latte': 'Latte',
+    'cappuccino': 'Cappuccino',
+    'mocha': 'Mocha',
+    'hot-chocolate': 'Hot Chocolate'
+};
 
-        console.log(`Added to basket: ${drinkName} - $${total}`);
+// Add to Basket with Backend Integration
+function setupAddToBasketButton() {
+    const btn = document.querySelector('.add-to-basket-btn');
+
+    btn.addEventListener('click', async function () {
+        if (!isLoggedIn()) {
+            // Show custom notification style from Drinks.js isn't defined globally, 
+            // so we'll use a simple alert or reuse the existing showNotification if available?
+            // Drinks.js actually doesn't have showNotification defined in the file.
+            // But we can check if it exists or use alert.
+            alert('Please login to add items to cart');
+            setTimeout(() => window.location.href = 'login.html', 1500);
+            return;
+        }
+
+        const originalText = btn.textContent;
+        btn.textContent = 'Adding...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+
+        try {
+            // 1. Identify Product ID based on Base
+            // We need to fetch products first or finding them on the fly
+            const response = await apiCall('/api/products?category=drinks', 'GET');
+            let productId = null;
+
+            if (response.status === 'success' && response.data.products) {
+                const products = response.data.products;
+                const targetName = drinkBaseToProductMap[drinkState.base] || 'Coffee'; // Default fallback
+
+                const match = products.find(p => p.name.toLowerCase().includes(targetName.toLowerCase()));
+                if (match) {
+                    productId = match.id;
+                }
+            }
+
+            if (!productId) {
+                console.error('Product not found for base:', drinkState.base);
+                alert('Error: Product unavailable');
+                return;
+            }
+
+            // 2. Prepare Cart Data
+            // Note: Current backend cart only supports product_id and quantity.
+            // Customizations (milk, flavor) are visual-only for now as per plan.
+            const userId = localStorage.getItem('user_id');
+            const cartData = {
+                product_id: productId,
+                quantity: 1
+            };
+            if (userId) cartData.user_id = parseInt(userId);
+
+            // 3. Call API
+            const cartResponse = await apiCall('/api/cart', 'POST', cartData);
+
+            if (cartResponse.status === 'success') {
+                // Success Animation
+                btn.textContent = '✓ Added to Basket!';
+                btn.style.background = '#4CAF50';
+                btn.style.opacity = '1';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 2000);
+
+                console.log(`Added to basket: ${drinkState.base} (ID: ${productId})`);
+            } else {
+                alert(cartResponse.message || 'Failed to add to basket');
+                btn.textContent = originalText;
+                btn.style.opacity = '1';
+                btn.disabled = false;
+            }
+
+        } catch (error) {
+            console.error('Error adding drink to cart:', error);
+            alert('Network error. Please try again.');
+            btn.textContent = originalText;
+            btn.style.opacity = '1';
+            btn.disabled = false;
+        }
     });
 }

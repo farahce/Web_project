@@ -27,9 +27,12 @@ async function apiCall(endpoint, method = 'GET', data = null) {
         options.body = JSON.stringify(data);
     }
 
+    const finalUrl = `${API_BASE_URL}${endpoint}`;
+    console.log(`Fetching: ${method} ${finalUrl}`);
+
     try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-        
+        const response = await fetch(finalUrl, options);
+
         // Check if response is JSON
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
@@ -40,7 +43,7 @@ async function apiCall(endpoint, method = 'GET', data = null) {
                 message: 'Invalid response from server'
             };
         }
-        
+
         const result = await response.json();
         return result;
     } catch (error) {

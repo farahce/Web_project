@@ -31,36 +31,49 @@ class SMSNotifications {
         return false;
     }
 
-    sendOrderConfirmationSMS(phone, orderId) {
-        console.log(`📱 SMS sent to ${phone}: Order ${orderId} confirmed!`);
-        return {
-            to: phone,
-            message: `🍩 Dafah: Your order #${orderId} is confirmed! Track it here: dafah.com/track/${orderId}`
-        };
+    async sendOrderConfirmationSMS(phone, orderId) {
+        console.log(`📱 Sending SMS to ${phone}...`);
+        try {
+            await apiCall('/api/notifications', 'POST', {
+                type: 'sms',
+                recipient: phone,
+                message: `🍩 Dafah: Your order #${orderId} is confirmed! Track it here: dafah.com/track/${orderId}`
+            });
+            console.log('SMS sent successfully');
+        } catch (error) {
+            console.error('Failed to send SMS:', error);
+        }
+        return { to: phone, message: 'Sent via backend' };
     }
 
-    sendDeliveryAlertSMS(phone, orderId) {
-        console.log(`📱 SMS sent to ${phone}: Delivery alert for order ${orderId}`);
-        return {
-            to: phone,
-            message: `🚚 Dafah: Your order #${orderId} is out for delivery! Expected arrival: Today`
-        };
+    async sendDeliveryAlertSMS(phone, orderId) {
+        try {
+            await apiCall('/api/notifications', 'POST', {
+                type: 'sms',
+                recipient: phone,
+                message: `🚚 Dafah: Your order #${orderId} is out for delivery! Expected arrival: Today`
+            });
+        } catch (error) { console.error('SMS Error:', error); }
     }
 
-    sendDeliveredSMS(phone, orderId) {
-        console.log(`📱 SMS sent to ${phone}: Order ${orderId} delivered!`);
-        return {
-            to: phone,
-            message: `✅ Dafah: Your order #${orderId} has been delivered! Rate your experience: dafah.com/rate/${orderId}`
-        };
+    async sendDeliveredSMS(phone, orderId) {
+        try {
+            await apiCall('/api/notifications', 'POST', {
+                type: 'sms',
+                recipient: phone,
+                message: `✅ Dafah: Your order #${orderId} has been delivered! Rate your experience: dafah.com/rate/${orderId}`
+            });
+        } catch (error) { console.error('SMS Error:', error); }
     }
 
-    sendPromotionalSMS(phone, message) {
-        console.log(`📱 SMS sent to ${phone}: ${message}`);
-        return {
-            to: phone,
-            message: `🎉 Dafah: ${message}`
-        };
+    async sendPromotionalSMS(phone, message) {
+        try {
+            await apiCall('/api/notifications', 'POST', {
+                type: 'sms',
+                recipient: phone,
+                message: `🎉 Dafah: ${message}`
+            });
+        } catch (error) { console.error('SMS Error:', error); }
     }
 
     sendVerificationSMS(phone, code) {

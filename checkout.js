@@ -42,16 +42,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Load Cart from backend API
 async function loadCart() {
     try {
-        const response = await apiCall('/api/cart', 'GET');
-        
+        // Create API URL with user_id fallback
+        const userId = localStorage.getItem('user_id');
+        const endpoint = userId ? `/api/cart?user_id=${userId}` : '/api/cart';
+
+        const response = await apiCall(endpoint, 'GET');
+
         if (response.status === 'success' && response.data && response.data.items) {
             // Convert backend cart items to checkout format
+            const productImageMap = {
+                // Donuts
+                'Classic Glazed Donut': 'images/yellowdonut.png',
+                'Chocolate Frosted': 'images/choclate-dount.png',
+                'Strawberry Jam Filled': 'images/pink-dount.png',
+                'Boston Cream': 'images/dount-white.png',
+                'Maple Bar': 'images/yellowdonut.png',
+                'Cinnamon Sugar': 'images/sugar-dount.png',
+                'Lemon Zest': 'images/yellow-dount.png',
+                'Cookies & Cream': 'images/choclate-dount.png',
+
+                // Cookies
+                'Chocolate Chip Cookie': 'images/vanillacochocolatecookies.png',
+                'Oatmeal Raisin': 'images/cookie3.png',
+                'Peanut Butter': 'images/twixcookies.png',
+                'Sugar Cookie': 'images/cookie1.png',
+                'Double Chocolate': 'images/choclatecokies.png',
+                'Macadamia Nut': 'images/cookie2.png',
+
+                // Drinks
+                'Iced Coffee': 'images/icedlate.png',
+                'Cappuccino': 'images/capucino.png',
+                'Vanilla Latte': 'images/caramel.png',
+                'Iced Tea': 'images/mintjuice.png',
+                'Hot Chocolate': 'images/hotchoco.png',
+                'Espresso Shot': 'images/espresso.png',
+                'Smoothie - Strawberry': 'images/pink-dount.png',
+                'Smoothie - Mango': 'images/yellow-dount.png'
+            };
+
             checkoutState.cart = response.data.items.map(item => ({
                 id: item.product_id,
                 name: item.name,
                 price: parseFloat(item.price),
                 quantity: item.quantity,
-                image: item.image_url || 'images/default.png'
+                image: (item.image_url && item.image_url !== 'null') ? item.image_url : (productImageMap[item.name] || 'images/default.png')
             }));
 
             if (checkoutState.cart.length === 0) {
@@ -212,14 +246,20 @@ function updatePaymentMethods() {
 
 // Go to Step
 function goToStep(step) {
-    if (step === 2 && !validateStep(1)) {
-        showToast('Please fill in all shipping information', 'error');
-        return;
+    if (step === 2) {
+        const validation = validateStep(1);
+        if (validation !== true) {
+            showToast(validation || 'Please fill in all shipping information', 'error');
+            return;
+        }
     }
 
-    if (step === 3 && !validateStep(2)) {
-        showToast('Please fill in all payment information', 'error');
-        return;
+    if (step === 3) {
+        const validation = validateStep(2);
+        if (validation !== true) {
+            showToast(validation || 'Please fill in all payment information', 'error');
+            return;
+        }
     }
 
     // Hide all steps
@@ -254,7 +294,7 @@ function validateStep(step) {
 
         for (let input of inputs) {
             if (!input.value.trim()) {
-                return false;
+                return 'Please fill in all required fields';
             }
         }
         return true;
@@ -268,12 +308,22 @@ function validateStep(step) {
             const cardCVV = document.getElementById('card-cvv');
 
             if (!cardName.value || !cardNumber.value || !cardExpiry.value || !cardCVV.value) {
-                return false;
+                return 'Please fill in all card details';
             }
 
             // Validate card number (basic)
             if (cardNumber.value.replace(/\s/g, '').length !== 16) {
-                return false;
+                return 'Card number must be 16 digits';
+            }
+
+            // Validate expiry (basic)
+            if (cardExpiry.value.length !== 5) {
+                return 'Invalid expiry date (MM/YY)';
+            }
+
+            // Validate CVV
+            if (cardCVV.value.length !== 3) {
+                return 'CVV must be 3 digits';
             }
         }
         return true;
@@ -361,6 +411,12 @@ async function placeOrder() {
             notes: `Shipping: ${getShippingMethodName(checkoutState.shipping.method)}`
         };
 
+        // Add user_id fallback
+        const userId = localStorage.getItem('user_id');
+        if (userId) {
+            orderData.user_id = parseInt(userId);
+        }
+
         // Create order via API
         const response = await apiCall('/api/orders', 'POST', orderData);
 
@@ -375,9 +431,15 @@ async function placeOrder() {
                 total: parseFloat(response.data.final_amount)
             };
 
-            // 📱 SEND SMS NOTIFICATION (if available)
-            if (checkoutState.shipping.phone && typeof smsNotifications !== 'undefined') {
+            // 📱 SEND SMS NOTIFICATION (if available and opted in)
+            const smsOptIn = document.getElementById('sms-opt-in')?.checked;
+            if (smsOptIn && checkoutState.shipping.phone && typeof smsNotifications !== 'undefined') {
                 smsNotifications.sendOrderConfirmationSMS(checkoutState.shipping.phone, order.id);
+            }
+
+            // 📧 SEND EMAIL NOTIFICATION (Always sent for order confirmation)
+            if (checkoutState.shipping.email && typeof emailMarketing !== 'undefined') {
+                emailMarketing.sendOrderConfirmation(checkoutState.shipping.email, order.id);
             }
 
             // Show success modal

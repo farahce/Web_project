@@ -5,6 +5,21 @@
  * GET /api/admin/customers?id=1 - Get specific customer details (admin only)
  */
 
+// Set CORS headers for credentials
+if (!headers_sent()) {
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Content-Type: application/json');  // <--- حطه هنا، داخل الـ if، في آخر الـ headers
+}
+// Handle preflight OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+require_once '../includes/functions.php';
 global $conn;
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -156,6 +171,120 @@ if ($method === 'GET') {
             'limit' => $limit,
             'offset' => $offset
         ]);
+    }
+
+
+} elseif ($method === 'PUT') {
+    // Update customer
+    $data = getJsonInput();
+
+    if (!isset($data['id'])) {
+        sendResponse('error', 'Customer ID is required');
+    }
+
+    $customer_id = (int)$data['id'];
+    
+    // Check if customer exists
+    $check_sql = "SELECT id FROM users WHERE id = ? AND role = 'user'";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("i", $customer_id);
+    $check_stmt->execute();
+    if ($check_stmt->get_result()->num_rows === 0) {
+        $check_stmt->close();
+        sendResponse('error', 'Customer not found');
+    }
+    $check_stmt->close();
+
+    $update_fields = [];
+    $params = [];
+    $param_types = "";
+
+    if (isset($data['username'])) {
+        $update_fields[] = "username = ?";
+        $params[] = trim($data['username']);
+        $param_types .= "s";
+    }
+    if (isset($data['email'])) {
+        $update_fields[] = "email = ?";
+        $params[] = trim($data['email']);
+        $param_types .= "s";
+    }
+    if (isset($data['phone'])) {
+        $update_fields[] = "phone = ?";
+        $params[] = trim($data['phone']);
+        $param_types .= "s";
+    }
+
+    if (empty($update_fields)) {
+        sendResponse('error', 'No fields to update');
+    }
+
+    $params[] = $customer_id;
+    $param_types .= "i";
+
+    $sql = "UPDATE users SET " . implode(", ", $update_fields) . " WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($param_types, ...$params);
+
+    if ($stmt->execute()) {
+        $stmt->close();
+        $user_id = getCurrentUserId();
+        logActivity($conn, $user_id, 'UPDATE_CUSTOMER', "Updated customer ID: $customer_id");
+        sendResponse('success', 'Customer updated successfully');
+    } else {
+        $error = $stmt->error;
+        $stmt->close();
+        sendResponse('error', 'Failed to update customer: ' . $error);
+    }
+
+} elseif ($method === 'DELETE') {
+    // Delete customer
+    $data = getJsonInput();
+
+    if (!isset($data['id'])) {
+        sendResponse('error', 'Customer ID is required');
+    }
+
+    $customer_id = (int)$data['id'];
+
+    if ($customer_id === getCurrentUserId()) {
+        sendResponse('error', 'Cannot delete yourself');
+    }
+
+    // Check if customer exists
+    $check_sql = "SELECT id FROM users WHERE id = ? AND role = 'user'";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("i", $customer_id);
+    $check_stmt->execute();
+    if ($check_stmt->get_result()->num_rows === 0) {
+        $check_stmt->close();
+        sendResponse('error', 'Customer not found');
+    }
+    $check_stmt->close();
+
+    // Check existing orders
+    $order_check_sql = "SELECT COUNT(*) as count FROM orders WHERE user_id = ?";
+    $stmt = $conn->prepare($order_check_sql);
+    $stmt->bind_param("i", $customer_id);
+    $stmt->execute();
+    $count = $stmt->get_result()->fetch_assoc()['count'];
+    $stmt->close();
+
+    if ($count > 0) {
+        sendResponse('error', 'Cannot delete customer with existing orders. Disable account instead?');
+    } else {
+        $sql = "DELETE FROM users WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $customer_id);
+        
+        if ($stmt->execute()) {
+            $stmt->close();
+            $user_id = getCurrentUserId();
+            logActivity($conn, $user_id, 'DELETE_CUSTOMER', "Deleted customer ID: $customer_id");
+            sendResponse('success', 'Customer deleted successfully');
+        } else {
+            sendResponse('error', 'Failed to delete customer: ' . $stmt->error);
+        }
     }
 
 } else {

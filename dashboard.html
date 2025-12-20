@@ -1,332 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Dashboard - Dafah</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="dashboard.css" />
 </head>
+
 <body>
-<header class="w-full">
-    <nav class="nav">
-        <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
-        <ul class="nav-links">
-            <li><a href="Home_page.html">Home</a></li>
-            <li><a href="menu.html">Menu</a></li>
-            <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a></li>
-            <li><a href="dashboard.html" class="nav-active"><i class="fas fa-user"></i> Dashboard</a></li>
-            <li><a href="#" onclick="logout()" class="nav-logout-btn">Logout</a></li>
-        </ul>
-    </nav>
-</header>
-
-<div class="dashboard-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="user-avatar">
-                <i class="fas fa-user-circle"></i>
-            </div>
-            <div class="user-info">
-                <h2 id="user-name">Welcome!</h2>
-                <p id="user-email">user@example.com</p>
-            </div>
-        </div>
-
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" onclick="switchTab('overview')">
-                <i class="fas fa-chart-line"></i>
-                <span>Overview</span>
-            </a>
-            <a href="#" class="nav-item" onclick="switchTab('orders')">
-                <i class="fas fa-box"></i>
-                <span>My Orders</span>
-            </a>
-            <a href="#" class="nav-item" onclick="switchTab('profile')">
-                <i class="fas fa-user"></i>
-                <span>Profile</span>
-            </a>
-            <a href="#" class="nav-item" onclick="switchTab('rewards')">
-                <i class="fas fa-gift"></i>
-                <span>Rewards</span>
-            </a>
-            <a href="#" class="nav-item" onclick="switchTab('settings')">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </a>
+    <header class="w-full">
+        <nav class="nav">
+            <h1 class="logo"><i class="fas fa-coffee" aria-hidden="true"></i> Dafah</h1>
+            <ul class="nav-links">
+                <li><a href="Home_page.html">Home</a></li>
+                <li><a href="menu.html">Menu</a></li>
+                <li><a href="cart.html"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+                <li><a href="dashboard.html" class="nav-active"><i class="fas fa-user"></i> Dashboard</a></li>
+                <li><a href="#" onclick="logout()" class="nav-logout-btn">Logout</a></li>
+            </ul>
         </nav>
+    </header>
 
-        <div class="sidebar-footer">
-            <a href="#" onclick="logout()" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Overview Tab -->
-        <section class="tab-content active" id="overview">
-            <div class="content-header">
-                <h1>Welcome Back!</h1>
-                <p>Here's your Dafah dashboard</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-shopping-bag"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>Total Orders</h3>
-                        <p class="stat-value" id="total-orders">0</p>
-                    </div>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
                 </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>Total Spent</h3>
-                        <p class="stat-value" id="total-spent">$0.00</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>Reward Points</h3>
-                        <p class="stat-value" id="reward-points">0</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-truck"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>Deliveries</h3>
-                        <p class="stat-value" id="total-deliveries">0</p>
-                    </div>
+                <div class="user-info">
+                    <h2 id="user-name">Welcome!</h2>
+                    <p id="user-email">user@example.com</p>
                 </div>
             </div>
 
-            <div class="recent-orders">
-                <h2>Recent Orders</h2>
-                <div id="recent-orders-list" class="orders-list"></div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" onclick="switchTab('overview')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('orders')">
+                    <i class="fas fa-box"></i>
+                    <span>My Orders</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('profile')">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('rewards')">
+                    <i class="fas fa-gift"></i>
+                    <span>Rewards</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="#" onclick="logout()" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
-        </section>
+        </aside>
 
-        <!-- Orders Tab -->
-        <section class="tab-content" id="orders">
-            <div class="content-header">
-                <h1>My Orders</h1>
-                <p>View and track all your orders</p>
-            </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Tab -->
+            <section class="tab-content active" id="overview">
+                <div class="content-header">
+                    <h1>Welcome Back!</h1>
+                    <p>Here's your Dafah dashboard</p>
+                </div>
 
-            <div class="orders-filters">
-                <button class="filter-btn active" onclick="filterOrders('all')">All</button>
-                <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
-                <button class="filter-btn" onclick="filterOrders('delivered')">Delivered</button>
-                <button class="filter-btn" onclick="filterOrders('cancelled')">Cancelled</button>
-            </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Orders</h3>
+                            <p class="stat-value" id="total-orders">0</p>
+                        </div>
+                    </div>
 
-            <div id="orders-container" class="orders-container"></div>
-        </section>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Spent</h3>
+                            <p class="stat-value" id="total-spent">$0.00</p>
+                        </div>
+                    </div>
 
-        <!-- Profile Tab -->
-        <section class="tab-content" id="profile">
-            <div class="content-header">
-                <h1>My Profile</h1>
-                <p>Manage your personal information</p>
-            </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Reward Points</h3>
+                            <p class="stat-value" id="reward-points">0</p>
+                        </div>
+                    </div>
 
-            <div class="profile-form">
-                <div class="form-section">
-                    <h2>Personal Information</h2>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Deliveries</h3>
+                            <p class="stat-value" id="total-deliveries">0</p>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="form-row">
+                <div class="recent-orders">
+                    <h2>Recent Orders</h2>
+                    <div id="recent-orders-list" class="orders-list"></div>
+                </div>
+            </section>
+
+            <!-- Orders Tab -->
+            <section class="tab-content" id="orders">
+                <div class="content-header">
+                    <h1>My Orders</h1>
+                    <p>View and track all your orders</p>
+                </div>
+
+                <div class="orders-filters">
+                    <button class="filter-btn active" onclick="filterOrders('all')">All</button>
+                    <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
+                    <button class="filter-btn" onclick="filterOrders('delivered')">Delivered</button>
+                    <button class="filter-btn" onclick="filterOrders('cancelled')">Cancelled</button>
+                </div>
+
+                <div id="orders-container" class="orders-container"></div>
+            </section>
+
+            <!-- Profile Tab -->
+            <section class="tab-content" id="profile">
+                <div class="content-header">
+                    <h1>My Profile</h1>
+                    <p>Manage your personal information</p>
+                </div>
+
+                <div class="profile-form">
+                    <div class="form-section">
+                        <h2>Personal Information</h2>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profile-first-name">First Name</label>
+                                <input type="text" id="profile-first-name" />
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-last-name">Last Name</label>
+                                <input type="text" id="profile-last-name" />
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label for="profile-first-name">First Name</label>
-                            <input type="text" id="profile-first-name" />
+                            <label for="profile-email">Email</label>
+                            <input type="email" id="profile-email" />
                         </div>
+
                         <div class="form-group">
-                            <label for="profile-last-name">Last Name</label>
-                            <input type="text" id="profile-last-name" />
+                            <label for="profile-phone">Phone Number</label>
+                            <input type="tel" id="profile-phone" />
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="profile-email">Email</label>
-                        <input type="email" id="profile-email" />
-                    </div>
+                    <div class="form-section">
+                        <h2>Address</h2>
 
-                    <div class="form-group">
-                        <label for="profile-phone">Phone Number</label>
-                        <input type="tel" id="profile-phone" />
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h2>Address</h2>
-
-                    <div class="form-group">
-                        <label for="profile-address">Street Address</label>
-                        <input type="text" id="profile-address" />
-                    </div>
-
-                    <div class="form-row">
                         <div class="form-group">
-                            <label for="profile-city">City</label>
-                            <input type="text" id="profile-city" />
+                            <label for="profile-address">Street Address</label>
+                            <input type="text" id="profile-address" />
                         </div>
-                        <div class="form-group">
-                            <label for="profile-zip">ZIP Code</label>
-                            <input type="text" id="profile-zip" />
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profile-city">City</label>
+                                <input type="text" id="profile-city" />
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-zip">ZIP Code</label>
+                                <input type="text" id="profile-zip" />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <button class="btn-save" onclick="saveProfile()">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-            </div>
-        </section>
-
-        <!-- Rewards Tab -->
-        <section class="tab-content" id="rewards">
-            <div class="content-header">
-                <h1>Rewards Program</h1>
-                <p>Earn points with every purchase</p>
-            </div>
-
-            <div class="rewards-container">
-                <div class="rewards-card">
-                    <div class="rewards-header">
-                        <h2>Your Points</h2>
-                        <p class="points-value" id="rewards-points">0</p>
-                    </div>
-                    <p class="points-info">Earn 1 point for every $1 spent</p>
-                    <div class="points-progress">
-                        <div class="progress-bar" id="rewards-progress"></div>
-                    </div>
-                    <p class="progress-text" id="progress-text">0 / 100 points to next reward</p>
-                </div>
-
-                <div class="rewards-list">
-                    <h2>Available Rewards</h2>
-                    <div class="reward-item">
-                        <div class="reward-icon">
-                            <i class="fas fa-cookie"></i>
-                        </div>
-                        <div class="reward-content">
-                            <h3>Free Donut</h3>
-                            <p>Redeem 50 points</p>
-                        </div>
-                        <button class="btn-redeem" onclick="redeemReward(50, 'Free Donut')">Redeem</button>
-                    </div>
-
-                    <div class="reward-item">
-                        <div class="reward-icon">
-                            <i class="fas fa-coffee"></i>
-                        </div>
-                        <div class="reward-content">
-                            <h3>Free Drink</h3>
-                            <p>Redeem 75 points</p>
-                        </div>
-                        <button class="btn-redeem" onclick="redeemReward(75, 'Free Drink')">Redeem</button>
-                    </div>
-
-                    <div class="reward-item">
-                        <div class="reward-icon">
-                            <i class="fas fa-gift"></i>
-                        </div>
-                        <div class="reward-content">
-                            <h3>$10 Off</h3>
-                            <p>Redeem 100 points</p>
-                        </div>
-                        <button class="btn-redeem" onclick="redeemReward(100, '$10 Off')">Redeem</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Settings Tab -->
-        <section class="tab-content" id="settings">
-            <div class="content-header">
-                <h1>Settings</h1>
-                <p>Manage your preferences</p>
-            </div>
-
-            <div class="settings-container">
-                <div class="settings-section">
-                    <h2>Notifications</h2>
-
-                    <div class="setting-item">
-                        <div class="setting-content">
-                            <h3>Email Notifications</h3>
-                            <p>Receive updates about your orders</p>
-                        </div>
-                        <label class="toggle">
-                            <input type="checkbox" id="email-notif" checked />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-
-                    <div class="setting-item">
-                        <div class="setting-content">
-                            <h3>Promotional Emails</h3>
-                            <p>Get special offers and deals</p>
-                        </div>
-                        <label class="toggle">
-                            <input type="checkbox" id="promo-notif" checked />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h2>Privacy</h2>
-
-                    <div class="setting-item">
-                        <div class="setting-content">
-                            <h3>Data Collection</h3>
-                            <p>Allow us to improve your experience</p>
-                        </div>
-                        <label class="toggle">
-                            <input type="checkbox" id="data-collection" checked />
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h2>Account</h2>
-
-                    <button class="btn-danger" onclick="changePassword()">
-                        <i class="fas fa-key"></i> Change Password
-                    </button>
-
-                    <button class="btn-danger" onclick="deleteAccount()">
-                        <i class="fas fa-trash"></i> Delete Account
+                    <button class="btn-save" onclick="saveProfile()">
+                        <i class="fas fa-save"></i> Save Changes
                     </button>
                 </div>
-            </div>
-        </section>
-    </main>
-</div>
+            </section>
 
-<!-- Toast Notification -->
-<div id="toast" class="toast"></div>
-<script src="api-config.js"></script>
-<script src="jquery.js"></script>
-<script src="dashboard.js"></script>
+            <!-- Rewards Tab -->
+            <section class="tab-content" id="rewards">
+                <div class="content-header">
+                    <h1>Rewards Program</h1>
+                    <p>Earn points with every purchase</p>
+                </div>
+
+                <div class="rewards-container">
+                    <div class="rewards-card">
+                        <div class="rewards-header">
+                            <h2>Your Points</h2>
+                            <p class="points-value" id="rewards-points">0</p>
+                        </div>
+                        <p class="points-info">Earn 1 point for every $1 spent</p>
+                        <div class="points-progress">
+                            <div class="progress-bar" id="rewards-progress"></div>
+                        </div>
+                        <p class="progress-text" id="progress-text">0 / 100 points to next reward</p>
+                    </div>
+
+                    <div class="rewards-list">
+                        <h2>Available Rewards</h2>
+                        <div class="reward-item">
+                            <div class="reward-icon">
+                                <i class="fas fa-cookie"></i>
+                            </div>
+                            <div class="reward-content">
+                                <h3>Free Donut</h3>
+                                <p>Redeem 50 points</p>
+                            </div>
+                            <button class="btn-redeem" onclick="redeemReward(50, 'Free Donut')">Redeem</button>
+                        </div>
+
+                        <div class="reward-item">
+                            <div class="reward-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <div class="reward-content">
+                                <h3>Free Drink</h3>
+                                <p>Redeem 75 points</p>
+                            </div>
+                            <button class="btn-redeem" onclick="redeemReward(75, 'Free Drink')">Redeem</button>
+                        </div>
+
+                        <div class="reward-item">
+                            <div class="reward-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="reward-content">
+                                <h3>$10 Off</h3>
+                                <p>Redeem 100 points</p>
+                            </div>
+                            <button class="btn-redeem" onclick="redeemReward(100, '$10 Off')">Redeem</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section class="tab-content" id="settings">
+                <div class="content-header">
+                    <h1>Settings</h1>
+                    <p>Manage your preferences</p>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h2>Notifications</h2>
+
+                        <div class="setting-item">
+                            <div class="setting-content">
+                                <h3>Email Notifications</h3>
+                                <p>Receive updates about your orders</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="email-notif" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-content">
+                                <h3>Promotional Emails</h3>
+                                <p>Get special offers and deals</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="promo-notif" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Privacy</h2>
+
+                        <div class="setting-item">
+                            <div class="setting-content">
+                                <h3>Data Collection</h3>
+                                <p>Allow us to improve your experience</p>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" id="data-collection" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2>Account</h2>
+
+                        <button class="btn-danger" onclick="changePassword()">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+
+                        <button class="btn-danger" onclick="deleteAccount()">
+                            <i class="fas fa-trash"></i> Delete Account
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    <script src="api-config.js?v=2"></script>
+    <script src="jquery.js"></script>
+    <script src="dashboard.js?v=2"></script>
 </body>
+
 </html>

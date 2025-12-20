@@ -26,6 +26,7 @@ const sectionTitles = {
     products: 'Products Management',
     orders: 'Orders Management',
     customers: 'Customers Management',
+    messages: 'Messages (Contact Us)',
     analytics: 'Analytics',
     settings: 'Settings'
 };
@@ -33,7 +34,7 @@ const sectionTitles = {
 // ============================================
 // INITIALIZATION
 // ============================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Require admin role
     requireAdmin();
 
@@ -62,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function setupNavigation() {
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
+            // Allow real links to work (e.g. admin_notifications.html)
+            if (item.getAttribute('href') !== '#' && !item.getAttribute('href').startsWith('javascript')) {
+                return;
+            }
+
             e.preventDefault();
 
             // Remove active class from all items
@@ -98,7 +104,7 @@ function setupNavigation() {
 // LOAD SECTION DATA
 // ============================================
 async function loadSectionData(sectionId) {
-    switch(sectionId) {
+    switch (sectionId) {
         case 'dashboard':
             await loadDashboard();
             break;
@@ -110,6 +116,9 @@ async function loadSectionData(sectionId) {
             break;
         case 'customers':
             await loadCustomers();
+            break;
+        case 'messages':
+            await loadMessages();
             break;
         case 'analytics':
             await loadAnalytics();
@@ -125,10 +134,18 @@ async function loadSectionData(sectionId) {
 // ============================================
 async function loadDashboard() {
     try {
+        console.log('Loading dashboard...');
+        // Show loading state visually to prove JS is working is NOT stuck on "old version"
+        document.querySelectorAll('.stat-value').forEach(el => el.textContent = 'Loading...');
+
         const response = await adminGetDashboard();
+        console.log('Dashboard Response:', response);
 
         if (response.status !== 'success') {
-            showNotification('Failed to load dashboard data', 'error');
+            const errorMsg = response.message || 'Unknown error';
+            console.error('Dashboard Error:', errorMsg);
+            alert('Dashboard Error: ' + errorMsg); // Alert user so they see it!
+            showNotification('Failed to load dashboard: ' + errorMsg, 'error');
             return;
         }
 
@@ -140,9 +157,6 @@ async function loadDashboard() {
         updateStatCard(2, data.stats.total_customers, '+5% from last month');
         updateStatCard(3, data.stats.total_products, 'Available');
 
-        // Update orders by status
-        updateOrdersChart(data.orders_by_status);
-
         // Update recent orders table
         updateRecentOrdersTable(data.recent_orders);
 
@@ -151,6 +165,7 @@ async function loadDashboard() {
 
     } catch (error) {
         console.error('Error loading dashboard:', error);
+        alert('Critical Error loading dashboard: ' + error.message);
         showNotification('Error loading dashboard data', 'error');
     }
 }
@@ -166,67 +181,81 @@ function updateStatCard(index, value, subtitle) {
     }
 }
 
-function updateOrdersChart(data) {
-    const chartContainer = document.querySelector('.chart-container');
-    if (!chartContainer) return;
-
-    let html = '<h3>Orders by Status</h3><div class="status-breakdown">';
-
-    data.forEach(item => {
-        const color = getStatusBadgeColor(item.status);
-        html += `
-            <div class="status-item">
-                <span class="status-label">${getStatusBadgeText(item.status)}</span>
-                <div class="status-bar">
-                    <div class="status-fill" style="width: ${(item.count / Math.max(...data.map(d => d.count))) * 100}%; background-color: ${color};"></div>
-                </div>
-                <span class="status-count">${item.count}</span>
-            </div>
-        `;
-    });
-
-    html += '</div>';
-    chartContainer.innerHTML = html;
-}
-
 function updateRecentOrdersTable(orders) {
     const tableBody = document.querySelector('#dashboard .data-table tbody');
     if (!tableBody) return;
 
-    if (orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No recent orders</td></tr>';
+    if (!orders || orders.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No recent orders</td></tr>';
         return;
     }
 
-    tableBody.innerHTML = orders.map(order => createOrderTableRow(order)).join('');
+    tableBody.innerHTML = orders.map(order => `
+        <tr data-order-id="${order.id}">
+            <td>${order.order_number}</td>
+            <td>${order.username}</td>
+            <td>${formatCurrency(order.final_amount)}</td>
+            <td>
+                <span class="badge" style="background-color: ${getStatusBadgeColor(order.status)}; color: white;">
+                    ${getStatusBadgeText(order.status)}
+                </span>
+            </td>
+            <td>${formatShortDate(order.created_at)}</td>
+            <td>
+                <button class="btn-icon view-order" title="View"><i class="fas fa-eye"></i></button>
+                <button class="btn-icon delete-order" title="Delete"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
 
-    // Add event listeners
+    // Re-attach event listeners for these new buttons
     tableBody.querySelectorAll('.view-order').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const orderId = btn.closest('tr').dataset.orderId;
             viewOrderDetails(orderId);
         });
     });
+
+    tableBody.querySelectorAll('.delete-order').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if (!confirm('Are you sure you want to delete this order?')) return;
+            const orderId = btn.closest('tr').dataset.orderId;
+            const response = await adminDeleteOrder(orderId);
+            if (response.status === 'success') {
+                showNotification('Order deleted', 'success');
+                loadDashboard(); // Reload dashboard
+            } else {
+                showNotification(response.message || 'Failed to delete', 'error');
+            }
+        });
+    });
 }
 
 function updateTopProductsTable(products) {
-    const tableBody = document.querySelector('.top-products-table tbody');
-    if (!tableBody) return;
+    const productList = document.querySelector('.product-list');
+    if (!productList) return;
 
-    if (products.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No products sold yet</td></tr>';
+    if (!products || products.length === 0) {
+        productList.innerHTML = '<div class="product-item"><p>No products sold yet</p></div>';
         return;
     }
 
-    tableBody.innerHTML = products.map(product => `
-        <tr>
-            <td>${product.name}</td>
-            <td>${formatCurrency(product.price)}</td>
-            <td>${product.total_sold}</td>
-            <td>${formatCurrency(product.revenue)}</td>
-            <td><span class="badge badge-success">${product.total_sold > 10 ? 'Popular' : 'Regular'}</span></td>
-        </tr>
-    `).join('');
+    const maxSold = Math.max(...products.map(p => p.total_sold || 0));
+
+    productList.innerHTML = products.slice(0, 4).map(product => {
+        const percentage = maxSold > 0 ? (product.total_sold / maxSold) * 100 : 0;
+        return `
+            <div class="product-item">
+                <div class="product-info">
+                    <h4>${product.name}</h4>
+                    <p>${product.total_sold || 0} sold</p>
+                </div>
+                <div class="product-bar">
+                    <div class="bar-fill" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
 
 // ============================================
@@ -234,12 +263,13 @@ function updateTopProductsTable(products) {
 // ============================================
 async function loadProducts() {
     try {
-        showLoadingSpinner(document.querySelector('#products .section-content'));
+        const container = document.querySelector('#products .section-content');
+        showLoadingSpinner(container);
 
         const response = await adminGetProducts(null, null, currentPage.limit, currentPage.offset);
 
         if (response.status !== 'success') {
-            showErrorMessage(document.querySelector('#products .section-content'), 'Failed to load products');
+            showErrorMessage(container, 'Failed to load products');
             return;
         }
 
@@ -248,7 +278,8 @@ async function loadProducts() {
 
     } catch (error) {
         console.error('Error loading products:', error);
-        showErrorMessage(document.querySelector('#products .section-content'), 'Error loading products');
+        const container = document.querySelector('#products .section-content');
+        showErrorMessage(container, 'Error loading products');
     }
 }
 
@@ -256,8 +287,8 @@ function displayProductsTable(products) {
     const tableBody = document.querySelector('#products .data-table tbody');
     if (!tableBody) return;
 
-    if (products.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No products found</td></tr>';
+    if (!products || products.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No products found</td></tr>';
         return;
     }
 
@@ -421,12 +452,13 @@ function showProductModal(product = null) {
 // ============================================
 async function loadOrders() {
     try {
-        showLoadingSpinner(document.querySelector('#orders .section-content'));
+        const container = document.querySelector('#orders .section-content');
+        showLoadingSpinner(container);
 
         const response = await adminGetOrders(null, currentPage.limit, currentPage.offset);
 
         if (response.status !== 'success') {
-            showErrorMessage(document.querySelector('#orders .section-content'), 'Failed to load orders');
+            showErrorMessage(container, 'Failed to load orders');
             return;
         }
 
@@ -435,7 +467,8 @@ async function loadOrders() {
 
     } catch (error) {
         console.error('Error loading orders:', error);
-        showErrorMessage(document.querySelector('#orders .section-content'), 'Error loading orders');
+        const container = document.querySelector('#orders .section-content');
+        showErrorMessage(container, 'Error loading orders');
     }
 }
 
@@ -443,8 +476,8 @@ function displayOrdersTable(orders) {
     const tableBody = document.querySelector('#orders .data-table tbody');
     if (!tableBody) return;
 
-    if (orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No orders found</td></tr>';
+    if (!orders || orders.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No orders found</td></tr>';
         return;
     }
 
@@ -462,6 +495,22 @@ function displayOrdersTable(orders) {
         btn.addEventListener('click', (e) => {
             const orderId = btn.closest('tr').dataset.orderId;
             editOrderStatus(orderId);
+        });
+    });
+
+    tableBody.querySelectorAll('.delete-order').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if (!confirm('Are you sure you want to delete this order? This cannot be undone.')) return;
+
+            const orderId = btn.closest('tr').dataset.orderId;
+            const response = await adminDeleteOrder(orderId);
+
+            if (response.status === 'success') {
+                showNotification('Order deleted successfully', 'success');
+                loadOrders();
+            } else {
+                showNotification(response.message || 'Failed to delete order', 'error');
+            }
         });
     });
 }
@@ -517,7 +566,7 @@ function showOrderDetailsModal(order) {
                         <p><strong>Order Number:</strong> ${order.order_number}</p>
                         <p><strong>Status:</strong> <span class="badge" style="background-color: ${getStatusBadgeColor(order.status)}; color: white;">${getStatusBadgeText(order.status)}</span></p>
                         <p><strong>Date:</strong> ${formatDate(order.created_at)}</p>
-                        <p><strong>Payment Method:</strong> ${order.payment_method}</p>
+                        <p><strong>Payment Method:</strong> ${order.payment_method || 'N/A'}</p>
                     </div>
                     <div class="detail-section">
                         <h3>Customer Information</h3>
@@ -527,8 +576,8 @@ function showOrderDetailsModal(order) {
                     </div>
                     <div class="detail-section">
                         <h3>Shipping Address</h3>
-                        <p>${order.shipping_address}</p>
-                        <p>${order.shipping_city}, ${order.shipping_country} ${order.shipping_postal_code}</p>
+                        <p>${order.shipping_address || 'N/A'}</p>
+                        <p>${order.shipping_city || ''}, ${order.shipping_country || ''} ${order.shipping_postal_code || ''}</p>
                     </div>
                 </div>
                 
@@ -543,7 +592,7 @@ function showOrderDetailsModal(order) {
                         </tr>
                     </thead>
                     <tbody>
-                        ${itemsHtml}
+                        ${itemsHtml || '<tr><td colspan="4" class="text-center">No items</td></tr>'}
                     </tbody>
                 </table>
 
@@ -652,12 +701,13 @@ function showOrderStatusModal(order) {
 // ============================================
 async function loadCustomers() {
     try {
-        showLoadingSpinner(document.querySelector('#customers .section-content'));
+        const container = document.querySelector('#customers .section-content');
+        showLoadingSpinner(container);
 
         const response = await adminGetCustomers(null, currentPage.limit, currentPage.offset);
 
         if (response.status !== 'success') {
-            showErrorMessage(document.querySelector('#customers .section-content'), 'Failed to load customers');
+            showErrorMessage(container, 'Failed to load customers');
             return;
         }
 
@@ -666,7 +716,8 @@ async function loadCustomers() {
 
     } catch (error) {
         console.error('Error loading customers:', error);
-        showErrorMessage(document.querySelector('#customers .section-content'), 'Error loading customers');
+        const container = document.querySelector('#customers .section-content');
+        showErrorMessage(container, 'Error loading customers');
     }
 }
 
@@ -674,7 +725,7 @@ function displayCustomersTable(customers) {
     const tableBody = document.querySelector('#customers .data-table tbody');
     if (!tableBody) return;
 
-    if (customers.length === 0) {
+    if (!customers || customers.length === 0) {
         tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No customers found</td></tr>';
         return;
     }
@@ -688,10 +739,98 @@ function displayCustomersTable(customers) {
             viewCustomerDetails(customerId);
         });
     });
+
+    tableBody.querySelectorAll('.edit-customer').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const customerId = btn.closest('tr').dataset.customerId;
+            editCustomer(customerId); // We need to create this function
+        });
+    });
+
+    tableBody.querySelectorAll('.delete-customer').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if (!confirm('Are you sure you want to delete this user?')) return;
+
+            const customerId = btn.closest('tr').dataset.customerId;
+            const response = await adminDeleteCustomer(customerId);
+
+            if (response.status === 'success') {
+                showNotification('Customer deleted successfully', 'success');
+                loadCustomers();
+            } else {
+                showNotification(response.message || 'Failed to delete customer', 'error');
+            }
+        });
+    });
 }
 
 function setupCustomersPagination(total) {
     // Pagination logic here
+}
+
+// ============================================
+// MESSAGES MANAGEMENT
+// ============================================
+async function loadMessages() {
+    try {
+        const container = document.querySelector('#messages .card'); // Use card or specific container
+        if (container.querySelector('.table-container')) {
+            // It has the structure
+        }
+
+        const response = await adminGetMessages();
+
+        if (response.status !== 'success') {
+            showNotification(response.message || 'Failed to load messages', 'error');
+            return;
+        }
+
+        displayMessagesTable(response.data);
+
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+function displayMessagesTable(messages) {
+    const tableBody = document.querySelector('#messages .data-table tbody');
+    if (!tableBody) return;
+
+    if (!messages || messages.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">No messages found</td></tr>';
+        return;
+    }
+
+    tableBody.innerHTML = messages.map(msg => `
+        <tr data-message-id="${msg.id}">
+            <td>${formatShortDate(msg.created_at)}</td>
+            <td>${msg.name}</td>
+            <td><a href="mailto:${msg.email}">${msg.email}</a></td>
+            <td>${msg.subject}</td>
+            <td><span class="badge" style="background-color: ${msg.status === 'new' ? '#FF9800' : '#4CAF50'}; color: white;">${msg.status}</span></td>
+            <td>
+                <a href="mailto:${msg.email}?subject=Re: ${msg.subject}" class="btn-icon" title="Reply"><i class="fas fa-reply"></i></a>
+                <button class="btn-icon delete-message" title="Delete"><i class="fas fa-trash"></i></button>
+            </td>
+        </tr>
+    `).join('');
+
+    // Add event listeners for delete buttons
+    tableBody.querySelectorAll('.delete-message').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if (!confirm('Are you sure you want to delete this message?')) return;
+
+            const messageId = btn.closest('tr').dataset.messageId;
+            const response = await adminDeleteMessage(messageId);
+
+            if (response.status === 'success') {
+                showNotification('Message deleted', 'success');
+                loadMessages(); // Reload table
+            } else {
+                showNotification(response.message || 'Failed to delete', 'error');
+            }
+        });
+    });
 }
 
 async function viewCustomerDetails(customerId) {
@@ -782,30 +921,97 @@ function showCustomerDetailsModal(customer) {
     modal.querySelector('.modal-close-btn').addEventListener('click', () => modal.remove());
 }
 
+async function editCustomer(customerId) {
+    try {
+        const response = await adminGetCustomer(customerId);
+        if (response.status === 'success') {
+            showCustomerEditModal(response.data.customer);
+        } else {
+            showNotification('Failed to load customer', 'error');
+        }
+    } catch (error) {
+        showNotification('Error loading customer', 'error');
+    }
+}
+
+function showCustomerEditModal(customer) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Customer</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="customerForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-input" value="${customer.username}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-input" value="${customer.email}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" name="phone" class="form-input" value="${customer.phone || ''}">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close-btn">Cancel</button>
+                <button class="btn btn-primary" id="saveCustomerBtn">Save Changes</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+    modal.querySelector('.modal-close-btn').addEventListener('click', () => modal.remove());
+
+    modal.querySelector('#saveCustomerBtn').addEventListener('click', async () => {
+        const form = modal.querySelector('#customerForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        const response = await adminUpdateCustomer(customer.id, data);
+        if (response.status === 'success') {
+            showNotification('Customer updated', 'success');
+            modal.remove();
+            loadCustomers();
+        } else {
+            showNotification(response.message || 'Failed to update', 'error');
+        }
+    });
+}
+
 // ============================================
 // ANALYTICS
 // ============================================
 async function loadAnalytics() {
     try {
-        showLoadingSpinner(document.querySelector('#analytics .section-content'));
+        const container = document.querySelector('#analytics .section-content');
+        showLoadingSpinner(container);
 
         const response = await adminGetAnalytics('month');
 
         if (response.status !== 'success') {
-            showErrorMessage(document.querySelector('#analytics .section-content'), 'Failed to load analytics');
+            showErrorMessage(container, 'Failed to load analytics');
             return;
         }
 
-        displayAnalytics(response.data);
+        displayAnalytics(response.data, container);
 
     } catch (error) {
         console.error('Error loading analytics:', error);
-        showErrorMessage(document.querySelector('#analytics .section-content'), 'Error loading analytics');
+        const container = document.querySelector('#analytics .section-content');
+        showErrorMessage(container, 'Error loading analytics');
     }
 }
 
-function displayAnalytics(data) {
-    const container = document.querySelector('#analytics .section-content');
+function displayAnalytics(data, container) {
     if (!container) return;
 
     let html = '<div class="analytics-container">';
@@ -818,6 +1024,8 @@ function displayAnalytics(data) {
             html += `<tr><td>${item.period}</td><td>${item.orders}</td><td>${formatCurrency(item.revenue)}</td><td>${formatCurrency(item.avg_order_value)}</td></tr>`;
         });
         html += '</tbody></table>';
+    } else {
+        html += '<p>No sales data available</p>';
     }
     html += '</div>';
 
@@ -829,6 +1037,8 @@ function displayAnalytics(data) {
             html += `<tr><td>${item.name}</td><td>${item.category}</td><td>${item.total_quantity}</td><td>${formatCurrency(item.total_revenue)}</td></tr>`;
         });
         html += '</tbody></table>';
+    } else {
+        html += '<p>No product data available</p>';
     }
     html += '</div>';
 
@@ -840,6 +1050,8 @@ function displayAnalytics(data) {
             html += `<tr><td>${item.category}</td><td>${item.total_quantity}</td><td>${formatCurrency(item.total_revenue)}</td><td>${item.unique_customers}</td></tr>`;
         });
         html += '</tbody></table>';
+    } else {
+        html += '<p>No category data available</p>';
     }
     html += '</div>';
 
@@ -889,7 +1101,7 @@ function setupEventListeners() {
     // Sidebar toggle for mobile
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', () => {
-            sidebarNav.classList.toggle('active');
+            document.querySelector('.sidebar-nav').classList.toggle('active');
         });
     }
 
@@ -910,7 +1122,7 @@ function setupEventListeners() {
     // Responsive sidebar
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768) {
-            sidebarNav.classList.remove('active');
+            document.querySelector('.sidebar-nav').classList.remove('active');
         }
     });
 }
@@ -925,7 +1137,7 @@ function setupProfileButton() {
         document.querySelector('.admin-profile');
 
     if (profileBtn) {
-        profileBtn.addEventListener('click', function(e) {
+        profileBtn.addEventListener('click', function (e) {
             e.preventDefault();
             const settingsSection = document.getElementById('settings');
             if (settingsSection) {
@@ -947,3 +1159,89 @@ window.addEventListener('load', () => {
 });
 
 console.log('Admin Dashboard loaded successfully!');
+
+
+// ============================================
+// HTML GENERATORS (Inserted locally to ensure updates)
+// ============================================
+
+function createProductTableRow(product) {
+    const statusBadge = product.is_available ?
+        '<span class="badge badge-success">Active</span>' :
+        '<span class="badge badge-danger">Inactive</span>';
+
+    return `
+        <tr data-product-id="${product.id}">
+            <td>${product.name || 'N/A'}</td>
+            <td>${product.category || 'N/A'}</td>
+            <td>${formatCurrency(product.price)}</td>
+            <td>${product.stock_quantity || 0}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <button class="btn-icon edit-product" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon delete-product" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+function createOrderTableRow(order) {
+    const statusColor = getStatusBadgeColor(order.status);
+    const statusText = getStatusBadgeText(order.status);
+    const itemCount = order.items ? order.items.length : 0;
+
+    return `
+        <tr data-order-id="${order.id}">
+            <td>${order.order_number || 'N/A'}</td>
+            <td>${order.username || 'N/A'}</td>
+            <td>${itemCount} items</td>
+            <td>${formatCurrency(order.final_amount)}</td>
+            <td>
+                <span class="badge" style="background-color: ${statusColor}; color: white;">
+                    ${statusText}
+                </span>
+            </td>
+            <td>${formatShortDate(order.created_at)}</td>
+            <td>
+                <button class="btn-icon view-order" title="View Details">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-icon edit-order" title="Update Status">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon delete-order" title="Delete Order">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+function createCustomerTableRow(customer) {
+    return `
+        <tr data-customer-id="${customer.id}">
+            <td>${customer.id || 'N/A'}</td>
+            <td>${customer.username || 'N/A'}</td>
+            <td>${customer.email || 'N/A'}</td>
+            <td>${customer.phone || 'N/A'}</td>
+            <td>${customer.total_orders || 0}</td>
+            <td>${formatCurrency(customer.total_spent || 0)}</td>
+            <td>${formatShortDate(customer.created_at)}</td>
+            <td>
+                <button class="btn-icon view-customer" title="View Details">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-icon edit-customer" title="Edit Customer">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon delete-customer" title="Delete Customer">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+}

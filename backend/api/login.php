@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 if (session_status() === PHP_SESSION_NONE) {
     // Configure session cookie to work with credentials
     ini_set('session.cookie_httponly', '1');
-    ini_set('session.cookie_samesite', 'None');
+    ini_set('session.cookie_samesite', 'Lax');
     ini_set('session.cookie_secure', '0'); // Set to 1 if using HTTPS
     session_start();
 }

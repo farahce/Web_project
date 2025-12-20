@@ -9,95 +9,82 @@ let dashboardState = {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Load user data first
-    loadUserData();
+    // Check login first
+    if (!localStorage.getItem('user_id')) {
+        window.location.href = 'login.html';
+        return;
+    }
 
-    // Initialize auth UI
+    // Load data from Backend
+    loadDashboardData();
+
+    // Setup UI
     initializeAuth();
-
-    // Setup logout button
     setupLogoutButton('.logout-btn');
-
-    // Setup profile button
     setupProfileButton();
-
-    loadOrders();
-    calculateRewards();
-    updateDashboard();
     setupEventListeners();
 });
 
-// Load User Data
-function loadUserData() {
-    // Try to get user from localStorage (from login system)
-    let userData = localStorage.getItem('user');
+// Load Dashboard Data (User + Orders)
+async function loadDashboardData() {
+    try {
+        const response = await apiCall('/api/dashboard', 'GET');
 
-    // If not found, try the old key (for backward compatibility)
-    if (!userData) {
-        userData = localStorage.getItem('dafah_user');
-    }
+        if (response.status === 'success') {
+            const data = response.data;
+            dashboardState.user = data.user;
+            dashboardState.orders = data.orders;
+            dashboardState.rewards = parseInt(data.stats.points) || 0;
 
-    if (userData) {
-        dashboardState.user = JSON.parse(userData);
-
-        // Display user info
-        const displayName = dashboardState.user.username || dashboardState.user.firstName + ' ' + dashboardState.user.lastName || 'User';
-        document.getElementById('user-name').textContent = displayName;
-        document.getElementById('user-email').textContent = dashboardState.user.email;
-
-        // Populate profile form
-        document.getElementById('profile-first-name').value = dashboardState.user.firstName || '';
-        document.getElementById('profile-last-name').value = dashboardState.user.lastName || '';
-        document.getElementById('profile-email').value = dashboardState.user.email || '';
-        document.getElementById('profile-phone').value = dashboardState.user.phone || '';
-        document.getElementById('profile-address').value = dashboardState.user.address || '';
-        document.getElementById('profile-city').value = dashboardState.user.city || '';
-        document.getElementById('profile-zip').value = dashboardState.user.zip || '';
-    } else {
-        // No user data found - redirect to login
-        window.location.href = 'login.html';
+            // Update UI
+            updateUserInfo();
+            updateStats(data.stats);
+            updateDashboard(); // Recent orders logic
+            calculateRewards(); // Progress bar logic
+        } else {
+            console.error('Failed to load dashboard:', response.message);
+            // Optionally redirect to login if unauthorized
+            if (response.message.includes('Unauthorized')) {
+                window.location.href = 'login.html';
+            }
+        }
+    } catch (error) {
+        console.error('Network error loading dashboard:', error);
     }
 }
 
-// Load Orders
-function loadOrders() {
-    const orders = localStorage.getItem('dafah_orders');
-    dashboardState.orders = orders ? JSON.parse(orders) : [];
+function updateUserInfo() {
+    if (!dashboardState.user) return;
+
+    // Display user info
+    const displayName = dashboardState.user.username || 'User';
+    document.getElementById('user-name').textContent = displayName;
+    document.getElementById('user-email').textContent = dashboardState.user.email;
+
+    // Populate profile form
+    document.getElementById('profile-first-name').value = dashboardState.user.username || ''; // Map username to firstname for now
+    document.getElementById('profile-email').value = dashboardState.user.email || '';
+    document.getElementById('profile-phone').value = dashboardState.user.phone || '';
+    document.getElementById('profile-address').value = dashboardState.user.address || '';
+    document.getElementById('profile-city').value = dashboardState.user.city || '';
+    document.getElementById('profile-zip').value = dashboardState.user.zip || '';
 }
 
-// Calculate Rewards
-function calculateRewards() {
-    let totalSpent = 0;
-    dashboardState.orders.forEach(order => {
-        totalSpent += order.total;
-    });
-
-    // 1 point per $1 spent
-    dashboardState.rewards = Math.floor(totalSpent);
-
-    document.getElementById('reward-points').textContent = dashboardState.rewards;
-    document.getElementById('rewards-points').textContent = dashboardState.rewards;
-
-    // Update progress bar
-    const progress = (dashboardState.rewards % 100) / 100 * 100;
-    document.querySelector('.progress-bar').style.width = progress + '%';
-    document.getElementById('progress-text').textContent = `${dashboardState.rewards % 100} / 100 points to next reward`;
-}
-
-// Update Dashboard
-function updateDashboard() {
-    // Calculate stats
-    const totalOrders = dashboardState.orders.length;
-    const totalSpent = dashboardState.orders.reduce((sum, order) => sum + order.total, 0);
+function updateStats(stats) {
+    document.getElementById('total-orders').textContent = stats.total_orders;
+    document.getElementById('total-spent').textContent = `$${parseFloat(stats.total_spent).toFixed(2)}`;
+    // Calculate delivered manually or from backend if provided. 
+    // Backend stats didn't explicitly return delivered count in 'stats' array (only in orders list).
+    // So we can calculate it from dashboardState.orders
     const deliveredOrders = dashboardState.orders.filter(o => o.status === 'delivered').length;
-
-    document.getElementById('total-orders').textContent = totalOrders;
-    document.getElementById('total-spent').textContent = `$${totalSpent.toFixed(2)}`;
     document.getElementById('total-deliveries').textContent = deliveredOrders;
+}
 
+// Update Dashboard (Visuals)
+function updateDashboard() {
     // Recent orders
     const recentOrdersList = document.getElementById('recent-orders-list');
-    const recentOrders = dashboardState.orders.slice(-3).reverse();
+    const recentOrders = dashboardState.orders.slice(0, 3); // Already sorted DESC from backend
 
     if (recentOrders.length === 0) {
         recentOrdersList.innerHTML = '<p style="text-align: center; color: #999;">No orders yet</p>';
@@ -105,14 +92,14 @@ function updateDashboard() {
         recentOrdersList.innerHTML = recentOrders.map(order => `
             <div class="order-item">
                 <div class="order-info">
-                    <h3>${order.id}</h3>
+                    <h3>${order.order_number || order.id}</h3>
                     <p>${new Date(order.date).toLocaleDateString()}</p>
                 </div>
                 <div class="order-status ${getStatusClass(order.status || 'pending')}">
                     ${order.status || 'Pending'}
                 </div>
                 <div style="text-align: right;">
-                    <p style="font-weight: 600; color: var(--primary-color);">$${order.total.toFixed(2)}</p>
+                    <p style="font-weight: 600; color: var(--primary-color);">$${parseFloat(order.total).toFixed(2)}</p>
                 </div>
             </div>
         `).join('');
@@ -136,11 +123,11 @@ function displayOrders(filter) {
         return;
     }
 
-    ordersContainer.innerHTML = filteredOrders.reverse().map((order, index) => `
+    ordersContainer.innerHTML = filteredOrders.map((order, index) => `
         <div class="order-card" style="animation-delay: ${index * 0.1}s">
             <div class="order-header">
                 <div>
-                    <div class="order-number">${order.id}</div>
+                    <div class="order-number">${order.order_number || order.id}</div>
                     <div class="order-date">${new Date(order.date).toLocaleDateString()}</div>
                 </div>
                 <div class="order-status ${getStatusClass(order.status || 'pending')}">
@@ -152,7 +139,7 @@ function displayOrders(filter) {
                 ${order.items.map(item => `
                     <div class="order-item-detail">
                         <span>${item.name} x${item.quantity}</span>
-                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                        <span>$${(parseFloat(item.price) * item.quantity).toFixed(2)}</span>
                     </div>
                 `).join('')}
             </div>
@@ -160,12 +147,27 @@ function displayOrders(filter) {
             <div class="order-footer">
                 <div>
                     <p style="font-size: 12px; color: #999; margin-bottom: 5px;">Shipping to:</p>
-                    <p style="font-size: 13px; color: var(--secondary-color);">${order.shipping.address}, ${order.shipping.city}</p>
+                    <p style="font-size: 13px; color: var(--secondary-color);">${order.shipping.address || 'N/A'}, ${order.shipping.city || ''}</p>
                 </div>
-                <div class="order-total">$${order.total.toFixed(2)}</div>
+                <div class="order-total">$${parseFloat(order.total).toFixed(2)}</div>
             </div>
         </div>
     `).join('');
+}
+
+// Calculate Rewards / Progress Bar
+function calculateRewards() {
+    // Points are now coming from DB, not calculated from total spent locally
+    // If you want to show "Points Earned" vs "Current Balance", that would be different.
+    // Here we show Current Point Balance.
+
+    document.getElementById('reward-points').textContent = dashboardState.rewards;
+    document.getElementById('rewards-points').textContent = dashboardState.rewards;
+
+    // Update progress bar (assuming 100 points is the milestone)
+    const progress = (dashboardState.rewards % 100) / 100 * 100;
+    document.querySelector('.progress-bar').style.width = progress + '%';
+    document.getElementById('progress-text').textContent = `${dashboardState.rewards % 100} / 100 points to next reward`;
 }
 
 // Get Status Class
@@ -173,7 +175,9 @@ function getStatusClass(status) {
     const classes = {
         'pending': 'status-pending',
         'delivered': 'status-delivered',
-        'cancelled': 'status-cancelled'
+        'cancelled': 'status-cancelled',
+        'shipped': 'status-delivered', // reusing style
+        'processing': 'status-pending'
     };
     return classes[status] || 'status-pending';
 }
@@ -192,21 +196,14 @@ function setupEventListeners() {
 
 // Switch Tab
 function switchTab(tab) {
-    // Hide all tabs
-    document.querySelectorAll('.tab-content').forEach(t => {
-        t.classList.remove('active');
-    });
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
 
-    // Remove active from nav items
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-    });
+    const targetTab = document.getElementById(tab);
+    if (targetTab) targetTab.classList.add('active');
 
-    // Show selected tab
-    document.getElementById(tab).classList.add('active');
-
-    // Add active to nav item
-    document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+    const navItem = document.querySelector(`[onclick="switchTab('${tab}')"]`);
+    if (navItem) navItem.classList.add('active');
 
     dashboardState.currentTab = tab;
 }
@@ -214,88 +211,83 @@ function switchTab(tab) {
 // Filter Orders
 function filterOrders(filter) {
     dashboardState.filterType = filter;
-
-    // Update filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
-
     displayOrders(filter);
 }
 
 // Save Profile
-function saveProfile() {
-    const userData = {
-        ...dashboardState.user,
-        firstName: document.getElementById('profile-first-name').value,
-        lastName: document.getElementById('profile-last-name').value,
-        email: document.getElementById('profile-email').value,
+async function saveProfile() {
+    const profileData = {
+        action: 'update_profile',
         phone: document.getElementById('profile-phone').value,
         address: document.getElementById('profile-address').value,
         city: document.getElementById('profile-city').value,
         zip: document.getElementById('profile-zip').value
     };
 
-    localStorage.setItem('dafah_user', JSON.stringify(userData));
-    dashboardState.user = userData;
-
-    showToast('Profile updated successfully!', 'success');
+    try {
+        const response = await apiCall('/api/dashboard', 'POST', profileData);
+        if (response.status === 'success') {
+            showToast('Profile updated successfully!', 'success');
+            // Update local state
+            dashboardState.user = { ...dashboardState.user, ...profileData };
+        } else {
+            showToast(response.message || 'Failed to update profile', 'error');
+        }
+    } catch (error) {
+        showToast('Network error', 'error');
+    }
 }
 
 // Redeem Reward
-function redeemReward(points, rewardName) {
+async function redeemReward(points, rewardName) {
     if (dashboardState.rewards < points) {
         showToast('Not enough points to redeem this reward', 'warning');
         return;
     }
 
-    dashboardState.rewards -= points;
-    localStorage.setItem('dafah_rewards', dashboardState.rewards.toString());
+    if (!confirm(`Redeem ${rewardName} for ${points} points?`)) return;
 
-    document.getElementById('reward-points').textContent = dashboardState.rewards;
-    document.getElementById('rewards-points').textContent = dashboardState.rewards;
+    try {
+        const response = await apiCall('/api/dashboard', 'POST', {
+            action: 'redeem',
+            points: points
+        });
 
-    // Update progress bar
-    const progress = (dashboardState.rewards % 100) / 100 * 100;
-    document.querySelector('.progress-bar').style.width = progress + '%';
-    document.getElementById('progress-text').textContent = `${dashboardState.rewards % 100} / 100 points to next reward`;
-
-    showToast(`${rewardName} redeemed! Check your email for details.`, 'success');
-}
-
-// Change Password
-function changePassword() {
-    const newPassword = prompt('Enter your new password:');
-    if (newPassword && newPassword.length >= 8) {
-        dashboardState.user.password = newPassword;
-        localStorage.setItem('dafah_user', JSON.stringify(dashboardState.user));
-        showToast('Password changed successfully!', 'success');
-    } else if (newPassword) {
-        showToast('Password must be at least 8 characters', 'error');
+        if (response.status === 'success') {
+            const newBalance = response.data.new_balance;
+            dashboardState.rewards = newBalance;
+            calculateRewards();
+            showToast(`${rewardName} redeemed! Check your email for details.`, 'success');
+        } else {
+            showToast(response.message || 'Redemption failed', 'error');
+        }
+    } catch (error) {
+        showToast('Network error processing redemption', 'error');
     }
 }
 
-// Delete Account
+// Change Password - Placeholder as backend support for this wasn't explicitly requested/checked
+function changePassword() {
+    alert("Password change functionality coming soon!");
+}
+
+// Delete Account - Placeholder
 function deleteAccount() {
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        localStorage.removeItem('dafah_user');
-        localStorage.removeItem('dafah_cart');
-        localStorage.removeItem('dafah_orders');
-        localStorage.removeItem('dafah_rewards');
-
-        showToast('Account deleted. Redirecting...', 'warning');
-        setTimeout(() => {
-            window.location.href = 'Home_page.html';
-        }, 2000);
+        alert("Please contact support to delete your account.");
     }
 }
 
 // Logout
-function logout() {
+async function logout() {
     if (confirm('Are you sure you want to logout?')) {
-        localStorage.removeItem('dafah_user');
-        window.location.href = 'Home_page.html';
+        await apiCall('/api/logout', 'POST');
+        localStorage.removeItem('user');
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('dafah_user'); // legacy
+        window.location.href = 'login.html';
     }
 }
 
@@ -304,32 +296,8 @@ function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = `toast show ${type}`;
-
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
 }
-
-// Initialize on load
-window.addEventListener('load', () => {
-    updateDashboard();
-});
-
-// ============================================
-// PROFILE BUTTON SETUP
-// ============================================
-function setupProfileButton() {
-    // Find profile button/link in dashboard page
-    const profileBtn = document.querySelector('[data-profile-btn]') ||
-        document.querySelector('.profile-btn') ||
-        document.querySelector('.user-profile') ||
-        document.querySelector('.dashboard-profile');
-
-    if (profileBtn) {
-        profileBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Navigate to profile section
-            switchTab('profile');
-        });
-    }
-}
+// End of file

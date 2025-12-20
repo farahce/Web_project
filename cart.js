@@ -75,24 +75,24 @@ class CartManager {
         console.log('cartIdOrProductId received:', cartIdOrProductId, 'Type:', typeof cartIdOrProductId);
         console.log('productId received:', productId, 'Type:', typeof productId);
         console.log('Current cart:', this.cart);
-        
+
         // If two parameters, first is cart_id, second is product_id
         // If one parameter, it's product_id
         let searchId = productId || cartIdOrProductId;
         let cartId = productId ? cartIdOrProductId : null;
-        
+
         // Convert to number if it's a string
         searchId = typeof searchId === 'string' ? parseInt(searchId) : searchId;
         if (cartId) {
             cartId = typeof cartId === 'string' ? parseInt(cartId) : cartId;
         }
-        
+
         // If user is logged in, remove from database
         if (isLoggedIn()) {
             // If cart_id was passed directly, use it; otherwise find the item
             let item = null;
             let finalCartId = cartId;
-            
+
             if (finalCartId) {
                 // cart_id was passed directly
                 item = this.cart.find(i => i.cart_id == finalCartId);
@@ -108,10 +108,10 @@ class CartManager {
                     finalCartId = item.cart_id;
                 }
             }
-            
+
             console.log('Found item to remove:', item);
             console.log('Final cart_id to delete:', finalCartId);
-            
+
             if (item && finalCartId) {
                 try {
                     console.log('Calling DELETE API with cart_id:', finalCartId);
@@ -124,7 +124,7 @@ class CartManager {
                         deleteData.user_id = parseInt(userId);
                     }
                     console.log('Delete data:', deleteData);
-                    
+
                     const response = await apiCall('/api/cart', 'DELETE', deleteData);
 
                     console.log('Delete API response:', response);
@@ -150,8 +150,8 @@ class CartManager {
                 console.warn('Available items:', this.cart.map(i => ({ id: i.id, product_id: i.product_id, cart_id: i.cart_id })));
                 // If no cart_id, still remove from local display
                 this.cart = this.cart.filter(i => {
-                    const keep = !(i.id == searchId || i.product_id == searchId || 
-                                 String(i.id) === String(itemId) || String(i.product_id) === String(itemId));
+                    const keep = !(i.id == searchId || i.product_id == searchId ||
+                        String(i.id) === String(itemId) || String(i.product_id) === String(itemId));
                     return keep;
                 });
                 this.saveCart();
@@ -163,7 +163,7 @@ class CartManager {
             console.log('User not logged in, removing from localStorage only');
             this.cart = this.cart.filter(item => {
                 return !(item.id == searchId || item.product_id == searchId ||
-                        String(item.id) === String(itemId) || String(item.product_id) === String(itemId));
+                    String(item.id) === String(itemId) || String(item.product_id) === String(itemId));
             });
             this.saveCart();
             this.renderCart();
@@ -229,12 +229,12 @@ class CartManager {
                     'Lemon Zest': 'images/yellow-dount.png',
                     'Cookies & Cream': 'images/choclate-dount.png'
                 };
-                
+
                 let imageSrc = item.image;
                 if (!imageSrc || imageSrc === 'null' || imageSrc === '' || imageSrc === 'images/default.png') {
                     imageSrc = productImageMap[item.name] || 'images/default.png';
                 }
-                
+
                 return `
                 <div class="cart-item" style="animation-delay: ${index * 0.1}s">
                     <img src="${imageSrc}" alt="${item.name}" class="cart-item-image" onerror="this.src='images/default.png'" />
@@ -335,6 +335,7 @@ class CartManager {
 
                 // Map product names to image files
                 const productImageMap = {
+                    // Donuts
                     'Classic Glazed Donut': 'images/yellowdonut.png',
                     'Chocolate Frosted': 'images/choclate-dount.png',
                     'Strawberry Jam Filled': 'images/pink-dount.png',
@@ -342,17 +343,38 @@ class CartManager {
                     'Maple Bar': 'images/yellowdonut.png',
                     'Cinnamon Sugar': 'images/sugar-dount.png',
                     'Lemon Zest': 'images/yellow-dount.png',
-                    'Cookies & Cream': 'images/choclate-dount.png'
+                    'Cookies & Cream': 'images/choclate-dount.png',
+
+                    // Cookies
+                    'Chocolate Chip Cookie': 'images/vanillacochocolatecookies.png',
+                    'Oatmeal Raisin': 'images/cookie3.png',
+                    'Peanut Butter': 'images/twixcookies.png',
+                    'Sugar Cookie': 'images/cookie1.png',
+                    'Double Chocolate': 'images/choclatecokies.png',
+                    'Macadamia Nut': 'images/cookie2.png',
+
+                    // Drinks (Verified filenames)
+                    'Iced Coffee': 'images/icedlate.png',
+                    'Cappuccino': 'images/capucino.png',
+                    'Vanilla Latte': 'images/caramel.png',
+                    'Iced Tea': 'images/mintjuice.png', // Placeholder
+                    'Hot Chocolate': 'images/hotchoco.png',
+                    'Espresso Shot': 'images/espresso.png',
+                    'Smoothie - Strawberry': 'images/pink-dount.png', // Fallback
+                    'Smoothie - Mango': 'images/yellow-dount.png' // Fallback
                 };
 
                 // Update CartManager with backend cart
                 this.cart = cartItems.map(item => {
-                    // Get image - first try database image_url, then map by name, then default
+                    // Get image - first try database image_url, then map by name (trimmed), then default
                     let imageUrl = item.image_url;
                     if (!imageUrl || imageUrl === 'null' || imageUrl === '') {
-                        imageUrl = productImageMap[item.name] || 'images/default.png';
+                        const cleanName = item.name.trim();
+                        imageUrl = productImageMap[cleanName] || 'images/default.png';
+                        // Debug log if fallback used
+                        if (!productImageMap[cleanName]) console.warn('Missing image for:', cleanName);
                     }
-                    
+
                     return {
                         id: item.product_id,
                         product_id: item.product_id,
@@ -364,7 +386,7 @@ class CartManager {
                         description: item.name
                     };
                 });
-                
+
                 console.log('Cart loaded from database:', this.cart.length, 'items');
                 this.saveCart();
                 this.renderCart();
@@ -426,7 +448,7 @@ function goToCheckout() {
         cartManager.showToast('Your cart is empty!', 'warning');
         return;
     }
-    
+
     // Check if user is logged in before checkout
     if (!isLoggedIn()) {
         cartManager.showToast('Please login to proceed to checkout', 'error');
@@ -435,21 +457,21 @@ function goToCheckout() {
         }, 2000);
         return;
     }
-    
+
     window.location.href = 'checkout.html';
 }
 
 // Add to cart from other pages
-window.addToCart = async function(item) {
+window.addToCart = async function (item) {
     if (!cartManager) {
         cartManager = new CartManager();
     }
     await cartManager.addItem(item);
 };
 // Load cart items on page load
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     console.log('Cart page loaded');
-    
+
     // Wait for cartManager to be initialized
     if (!cartManager) {
         cartManager = new CartManager();
@@ -476,7 +498,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // User is logged in - load cart from backend
     console.log('Loading cart from database for logged in user');
     await cartManager.loadCartFromDatabase();
-    
+
     // Force a re-render after loading to ensure items are displayed
     if (cartManager.cart.length > 0) {
         console.log('Cart has items, rendering...', cartManager.cart);

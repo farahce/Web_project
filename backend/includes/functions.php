@@ -8,19 +8,17 @@
  * Send JSON response
  */
 function sendResponse($status, $message, $data = null) {
-    $response = [
+    header('Content-Type: application/json');
+
+    echo json_encode([
         'status' => $status,
         'message' => $message,
+        'data' => $data,
         'timestamp' => date('Y-m-d H:i:s')
-    ];
-
-    if ($data !== null) {
-        $response['data'] = $data;
-    }
-
-    echo json_encode($response);
-    exit;
+    ]);
+    exit; // 🔥 REQUIRED
 }
+
 
 /**
  * Validate email
@@ -105,7 +103,12 @@ function isUser() {
  */
 function requireAdmin() {
     if (!isAdmin()) {
-        sendResponse('error', 'Access denied. Admin privileges required.');
+        // Debugging Session State
+        $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'guest';
+        $uid = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null';
+        $sid = session_id();
+        
+        sendResponse('error', "Access denied. Admin privileges required. (Debug: Role=$role, UID=$uid, SessionID=$sid)");
     }
 }
 
@@ -167,6 +170,51 @@ function logActivity($conn, $user_id, $action, $details = null) {
     $stmt->close();
 
     return $result;
+}
+
+/**
+ * Send real email via Brevo API
+ */
+function sendRealEmail($to, $subject, $content, $toName = "") {
+    $apiKey = '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';
+    
+    $url = 'https://api.brevo.com/v3/smtp/email';
+    
+    $data = [
+        'sender' => [
+            'name' => 'Dafah Store',
+            'email' => 'danaimad04@gmail.com' // You can change this to your verified sender
+        ],
+        'to' => [
+            [
+                'email' => $to,
+                'name' => $toName
+            ]
+        ],
+        'subject' => $subject,
+        'htmlContent' => $content
+    ];
+    
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'api-key: ' . $apiKey,
+        'Content-Type: application/json',
+        'Accept: application/json'
+    ]);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode >= 200 && $httpCode < 300) {
+        return true;
+    } else {
+        error_log("Brevo API Error ($httpCode): " . $response);
+        return false;
+    }
 }
 
 ?>

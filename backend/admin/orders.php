@@ -6,6 +6,21 @@
  * PUT /api/admin/orders - Update order status (admin only)
  */
 
+// Set CORS headers for credentials
+if (!headers_sent()) {
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '*';
+    header('Access-Control-Allow-Origin: ' . $origin);
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Content-Type: application/json');  // <--- حطه هنا، داخل الـ if، في آخر الـ headers
+}
+// Handle preflight OPTIONS requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+require_once '../includes/functions.php';
 global $conn;
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -189,6 +204,60 @@ if ($method === 'GET') {
         $error = $stmt->error;
         $stmt->close();
         sendResponse('error', 'Failed to update order: ' . $error);
+    }
+
+
+} elseif ($method === 'DELETE') {
+    // Delete order
+    $data = getJsonInput();
+
+    if (!isset($data['id'])) {
+        sendResponse('error', 'Order ID is required');
+    }
+
+    $order_id = (int)$data['id'];
+
+    // Check if order exists
+    $check_sql = "SELECT id FROM orders WHERE id = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("i", $order_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows === 0) {
+        $check_stmt->close();
+        sendResponse('error', 'Order not found');
+    }
+    $check_stmt->close();
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Delete order items first
+        $items_sql = "DELETE FROM order_items WHERE order_id = ?";
+        $items_stmt = $conn->prepare($items_sql);
+        $items_stmt->bind_param("i", $order_id);
+        $items_stmt->execute();
+        $items_stmt->close();
+
+        // Delete order
+        $sql = "DELETE FROM orders WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
+        $stmt->close();
+
+        $conn->commit();
+
+         // Log activity
+        $user_id = getCurrentUserId();
+        logActivity($conn, $user_id, 'DELETE_ORDER', "Deleted order ID: $order_id");
+
+        sendResponse('success', 'Order deleted successfully');
+    } catch (Exception $e) {
+        $conn->rollback();
+        sendResponse('error', 'Failed to delete order: ' . $e->getMessage());
     }
 
 } else {

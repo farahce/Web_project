@@ -36,31 +36,32 @@ class EmailMarketing {
         this.saveSubscribers();
     }
 
-    sendWelcomeEmail(email) {
-        console.log(`📧 Welcome email sent to ${email}`);
-        return {
-            to: email,
-            subject: '🎉 Welcome to Dafah!',
-            body: 'Thanks for subscribing! Get 10% off your first order with code WELCOME10'
-        };
+    async sendWelcomeEmail(email) {
+        try {
+            await apiCall('/api/notifications', 'POST', {
+                type: 'email',
+                recipient: email,
+                subject: '🎉 Welcome to Dafah!',
+                message: 'Thanks for subscribing! Get 10% off your first order with code WELCOME10'
+            });
+        } catch (error) { console.error('Email Error:', error); }
     }
 
-    sendPromotionalEmail(subject, message) {
+    async sendPromotionalEmail(subject, message) {
+        // Broadcast to all (simulated loop or single call if API supported bulk)
+        // For now just logging as this is admin feature
         console.log(`📧 Promotional email: ${subject}`);
-        return {
-            subject: subject,
-            message: message,
-            recipients: this.subscribers.length
-        };
     }
 
-    sendOrderConfirmation(email, orderId) {
-        console.log(`📧 Order confirmation sent to ${email}`);
-        return {
-            to: email,
-            subject: `Order Confirmed: ${orderId}`,
-            body: 'Your order has been confirmed and will be shipped soon!'
-        };
+    async sendOrderConfirmation(email, orderId) {
+        try {
+            await apiCall('/api/notifications', 'POST', {
+                type: 'email',
+                recipient: email,
+                subject: `Order Confirmed: ${orderId}`,
+                message: 'Your order has been confirmed and will be shipped soon!'
+            });
+        } catch (error) { console.error('Email Error:', error); }
     }
 
     sendAbandonedCartEmail(email, cartItems) {
